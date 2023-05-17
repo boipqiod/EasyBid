@@ -20,9 +20,17 @@ class YoutubeService{
 
     test = async () =>{
         try {
-            await this.#getChatId()
-            await this.getChat()
+            const test1 = await this.#getChatId()
+            const test2 = await this.getChat()
 
+            if(!test1) {
+                console.log("getChatId False")
+                return false
+            }
+            if(!test2){
+                console.log("getChat False")
+                return false
+            }
             return true
         }catch (e) {
 
@@ -65,6 +73,7 @@ class YoutubeService{
 
             // console.log(res.data.items[0])
             this.#chatId = data.snippet.liveChatId
+            return true
 
         }catch (e) {
             console.log("getChatId", e)
@@ -91,6 +100,8 @@ class YoutubeService{
                         "Content-Type": "application/json"
                     }
                 })
+
+            return true
         }catch (e) {
             console.log(e)
             return false

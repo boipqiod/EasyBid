@@ -24,10 +24,12 @@ router.get('/', async (req, res, next) => {
 
     const test = await youtubeService.test()
 
+    console.log(test)
+
     if(test) {
         res.render("main/main")
     }else{
-        res.render("error")
+        res.redirect("/broadcast")
     }
 
 })
