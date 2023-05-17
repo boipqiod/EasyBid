@@ -1,0 +1,94 @@
+<html>
+
+<head>
+<title>경매 중인 상품</title>
+
+    <script src="/public/assets/dist/js/sweetalert.js"></script>
+    <script src="/public/assets/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="/public/assets/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <script type="module">
+        import SSE from "../common/sse.js";
+
+        let product
+        let price
+        let amount
+        let clients
+
+        /**
+         * @type {Element}
+         */
+        let onSale
+        let offSale
+
+        window.onload = () =>{
+            product = document.getElementById("product")
+            price = document.getElementById("price")
+            amount = document.getElementById("amount")
+            clients = document.getElementById("clients")
+
+            onSale = document.getElementById("onSale")
+            offSale = document.getElementById("offSale")
+
+            SSE.initSSE((e)=>{
+                let receivedData
+                try {
+                    receivedData = JSON.parse(e.data)
+                    console.log(receivedData)
+
+                    if(receivedData === {}) return
+
+                    if(receivedData.isEnd === true){
+                        onSale.classList.add("d-none")
+                        onSale.classList.remove("d-flex")
+                        offSale.classList.remove("d-none")
+                        offSale.classList.add("d-flex")
+
+                        let innerHtml = ""
+
+                        for(const item of receivedData.client){
+                            innerHtml += `${item?.name}님 ${item?.amount}개 <br>`
+                        }
+
+                        clients.innerHTML = innerHtml
+                        return;
+                    }
+                    onSale.classList.remove("d-none")
+                    onSale.classList.add("d-flex")
+                    offSale.classList.add("d-none")
+                    offSale.classList.remove("d-flex")
+
+
+
+                    product.textContent = receivedData.productName
+                    price.textContent = receivedData.price
+                    amount.textContent = (parseInt(receivedData.productAmount) - parseInt(receivedData.saleAmount)).toString()
+
+                } catch (e) {
+                    console.log(e)
+                }
+            })
+        }
+
+
+    </script>
+</head>
+<body>
+    <div class="vw-100 vh-100 d-flex justify-content-center align-items-center flex-column">
+
+        <div id="onSale" class="d-flex justify-content-center align-items-center flex-column">
+            <h1>판매 중인 상품 : <span id="product"></span></h1>
+            <h1>금액 : <span id="price"></span></h1>
+            <h1>남은 갯수 : <span id="amount"></span></h1>
+        </div>
+
+        <div hidden id="offSale" class="d-none justify-content-center align-items-center flex-column">
+            <h1>상품 판매가 완료되었습니다.</h1>
+            <h1>구매자 명단</h1>
+            <br>
+            <h1 id="clients"></h1>
+        </div>
+
+    </div>
+</body>
+</html>

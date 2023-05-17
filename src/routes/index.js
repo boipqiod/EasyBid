@@ -74,5 +74,9 @@ router.get('/broadcast', (req, res) => {
 })
 
 
+router.get('/display', (req, res) => {
+    res.render("display/display")
+})
+
 
 module.exports = router;

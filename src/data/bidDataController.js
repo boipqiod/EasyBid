@@ -32,6 +32,17 @@ class BidDataController {
         this.saleAmount = 0
         const message = `${this.productName} 경매를 시작합니다. 상품을 구매하고 싶은 만큼 숫자로 입력해주세요.`
         youtubeService.sendMessage(message).then()
+
+        sseManager.pushAll({
+            isEnd: false,
+            index: this.index,
+            productName: this.productName,
+            price: this.price,
+            saleAmount: this.saleAmount,
+            productAmount: this.productAmount,
+            client: this.client
+        })
+
     }
 
     startFetching = async () => {
@@ -110,7 +121,7 @@ class BidDataController {
         let message = `경매가 종료되었습니다. 구매하신분들으 확인해주세요. `
 
         for(let item of this.client){
-            message += ` [${item.name} : ${item.amount}] `
+            message += ` [${item.name} 님 : ${item.amount}개] `
         }
 
         await youtubeService.sendMessage(message)
