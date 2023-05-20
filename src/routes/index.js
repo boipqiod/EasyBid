@@ -78,5 +78,9 @@ router.get('/display', (req, res) => {
     res.render("display/display")
 })
 
+router.get('/clear', (req, res) =>{
+    youtubeService.clear()
+    res.redirect('/')
+})
 
 module.exports = router;
