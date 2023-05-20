@@ -38,6 +38,25 @@ class YoutubeService{
         }
     }
 
+    getBroadCast = async () =>{
+        const url = `https://youtube.googleapis.com/youtube/v3/liveBroadcasts?key=${this.apikey}&broadcastStatus=active`
+
+        try {
+            const res = await axios.get(url, {
+                headers:{
+                    Authorization: `Bearer ${this.tokenId}`,
+                    Accept: "application/json"
+                }})
+
+            console.log(res.data)
+            return res.data
+
+        }catch (e) {
+            console.log(e)
+            return false
+        }
+    }
+
     getChat = async () =>{
         const url = `https://youtube.googleapis.com/youtube/v3/liveChat/messages?liveChatId=${this.#chatId}&part=snippet%2CauthorDetails&key=${this.apikey}&pageToken=${this.#pagToken}`
         try {
@@ -81,6 +100,10 @@ class YoutubeService{
         }
     }
 
+    resetPageToken = () =>{
+        this.#pagToken = ``
+    }
+
     sendMessage = async text =>{
         try {
             await axios.post(`https://youtube.googleapis.com/youtube/v3/liveChat/messages?part=snippet&key=${this.apikey}`,
@@ -106,6 +129,14 @@ class YoutubeService{
             console.log(e)
             return false
         }
+    }
+
+    clear = () =>{
+        this.apikey = undefined
+        this.tokenId = undefined
+        this.#chatId = undefined
+        this.broadcastId = undefined
+        this.#pagToken = ''
     }
 
 }

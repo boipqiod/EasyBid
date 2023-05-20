@@ -4,6 +4,7 @@ let tbody
 let inputName
 let inputPrice
 let inputAmount
+let inputMax
 let buttonAdd
 let saleOff
 let saleOn
@@ -16,7 +17,7 @@ let buttonBidEnd
 let productIndex = 0
 
 /**
- * @type {[{amount: number, saleAmount: number, price: number, name: string, status: number, clients: [{name: string, amount: number}]}]}
+ * @type {[{amount: number, maxAmount: number, saleAmount: number, price: number, name: string, status: number, clients: [{name: string, amount: number}]}]}
  */
 let items = []
 
@@ -29,6 +30,7 @@ window.onload = () =>{
     inputName = document.getElementById("input-product-name")
     inputPrice= document.getElementById("input-product-price")
     inputAmount = document.getElementById("input-product-amount")
+    inputMax = document.getElementById("input-product-max")
     saleOff = document.getElementById("div-sale-off")
     saleOn = document.getElementById("div-sale-on")
 
@@ -77,6 +79,7 @@ const addProduct = async () =>{
     const name = inputName.value
     const price = inputPrice.value
     const amount = inputAmount.value
+    const max = inputMax.value
 
     if(!name || name === ""){
         swal("상품 이름을 입력해주세요.")
@@ -95,6 +98,7 @@ const addProduct = async () =>{
         name,
         price,
         amount,
+        maxAmount: max,
         saleAmount: 0,
         status: 0,
         clients: []

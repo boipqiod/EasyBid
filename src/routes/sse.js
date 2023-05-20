@@ -15,7 +15,7 @@ router.get('/events',
 
         // SSE 연결 이벤트 발송
         setInterval(() => {
-            res.write(`data: ${JSON.stringify({})}\n\n`);
+            res.write(`data: ${JSON.stringify({isFetching: true})}\n\n`);
         }, 50 * 1000);
 
         req.on('close', () => {

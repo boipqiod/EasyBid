@@ -37,6 +37,7 @@
                     console.log(receivedData)
 
                     if(receivedData === {}) return
+                    if(receivedData.isFetching) return
 
                     if(receivedData.isEnd === true){
                         onSale.classList.add("d-none")

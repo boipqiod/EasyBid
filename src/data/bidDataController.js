@@ -16,8 +16,9 @@ class BidDataController {
     //현재 판매 수
     saleAmount = 0
     //구매자 정보, 이름, 갯수
-
     client = []
+
+    maxAmount
 
     isEnd
 
@@ -28,6 +29,7 @@ class BidDataController {
         this.productName = data.name
         this.price = parseInt(data.price)
         this.productAmount = parseInt(data.amount)
+        this.maxAmount = parseInt(data.maxAmount)
         this.client = []
         this.saleAmount = 0
         const message = `${this.productName} 경매를 시작합니다. 상품을 구매하고 싶은 만큼 숫자로 입력해주세요.`
@@ -46,6 +48,8 @@ class BidDataController {
     }
 
     startFetching = async () => {
+        youtubeService.resetPageToken()
+        await youtubeService.getChat()
         await this.#fetch()
     }
 
@@ -61,24 +65,44 @@ class BidDataController {
             const item = items[i]
 
             const name = item.authorDetails.displayName
-            let amount = parseInt(item.snippet.displayMessage)
 
+            const amountString = item.snippet.displayMessage
+            if(!isNumericString(amountString)) continue
+            let amount = parseInt(amountString)
             if (isNaN(amount)) continue
 
             console.log(name, amount)
 
             if (this.saleAmount + amount > this.productAmount) {
                 amount = this.productAmount - this.saleAmount
+                await youtubeService.sendMessage(`${name}님 최대 갯수 초과로 ${amount}개만 구매 확인되었습니다`)
+            }else if(this.maxAmount !== 0 && amount > this.maxAmount){
+                amount = this.maxAmount
+                await youtubeService.sendMessage(`${name}님 최대 갯수 초과로 ${this.maxAmount}개만 구매 확인되었습니다`)
+            }else {
+                await youtubeService.sendMessage(`${name}님 ${amount}개 확인되었습니다.`)
             }
 
             //판매한량 저장
             this.saleAmount += amount
 
-            //구매한 사람 저장
-            this.client.push({
-                name: name,
-                amount: amount
-            })
+            //합치기
+            let isBreak = false
+            for(let i = 0; i < this.client.length; i ++ ){
+                if(this.client[i].name === name){
+                    this.client[i].amount += amount
+                    isBreak = true
+                    break
+                }
+            }
+
+            if(!isBreak){
+                //구매한 사람 저장
+                this.client.push({
+                    name: name,
+                    amount: amount
+                })
+            }
 
             //판매 완료 확인
             if (this.saleAmount === this.productAmount) {
@@ -107,7 +131,7 @@ class BidDataController {
             }
         }
 
-        await delay(delayTime)
+        await delay(500)
         await this.#fetch()
     }
 
@@ -118,15 +142,30 @@ class BidDataController {
 
     sendEndMessage = async () => {
         if(this.isEnd) return
-        let message = `경매가 종료되었습니다. 구매하신분들으 확인해주세요. `
-
-        for(let item of this.client){
-            message += ` [${item.name} 님 : ${item.amount}개] `
-        }
+        const message = `####${this.productName} 판매가 종료되었습니다. 구매하신분들은 확인해주세요. `
 
         await youtubeService.sendMessage(message)
+
+        let clientMessage = ``
+
+        for(let item of this.client){
+
+            let msg = `[${item.name} 님 : ${item.amount}개] `
+
+            if( (clientMessage + msg).length >= 200) {
+                await youtubeService.sendMessage(clientMessage)
+                clientMessage = ``
+            }
+            clientMessage += msg
+        }
+        await youtubeService.sendMessage(clientMessage)
+
     }
 
+}
+
+const isNumericString = str=> {
+    return /^\d+$/.test(str);
 }
 
 const bidDataController = new BidDataController()
