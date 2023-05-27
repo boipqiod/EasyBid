@@ -83,4 +83,9 @@ router.get('/clear', (req, res) =>{
     res.redirect('/')
 })
 
+router.get('/user', (req, res)=>{
+    res.render("display/user")
+
+})
+
 module.exports = router;
