@@ -9,6 +9,8 @@ router.get('/', async (req, res, next) => {
     console.log(req.query)
 
     if(!youtubeService.broadcastId || !youtubeService.apikey){
+        console.log("!youtubeService.broadcastId || !youtubeService.apikey")
+
         res.redirect("/broadcast")
         return
     }
@@ -26,11 +28,11 @@ router.get('/', async (req, res, next) => {
 
     const test = await youtubeService.test()
 
-    console.log(test)
-
     if(test) {
         res.render("main/main")
     }else{
+        console.log("youtubeService.test()")
+
         res.redirect("/broadcast")
     }
 
@@ -97,6 +99,11 @@ router.get('/display/seller', (req, res) => {
 router.get('/clear', (req, res) =>{
     youtubeService.clear()
     clearBid()
+    res.redirect('/')
+})
+
+router.get('/clearGoogle', (req, res) =>{
+    youtubeService.clear()
     res.redirect('/')
 })
 

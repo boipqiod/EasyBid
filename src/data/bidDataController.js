@@ -162,7 +162,7 @@ const isNumericString = str=> {
 let bidDataController = new BidDataController()
 
 const clearBid = () =>{
-    bidDataController = new BidDataController()
+    bidDataController.clear()
 }
 
 module.exports = {bidDataController, clearBid}

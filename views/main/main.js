@@ -373,6 +373,8 @@ const bidEnd = async () =>{
     const myInit  = {method: "post", headers: myHeaders};
     try {
         const res = await fetch("/endBid", myInit)
+        await addSavedProduct()
+
         console.log(await res.json())
     }catch (e) {
         console.log(e)
