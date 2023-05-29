@@ -50,7 +50,6 @@ class BidDataController {
             sseManager.pushAll(sseType.startSale, {index: this.index, onSaleData: onSaleData})
             youtubeService.resetPageToken()
             await youtubeService.getChat()
-            await this.#fetch()
         }catch (e) {
             console.log(e)
         }
@@ -79,16 +78,16 @@ class BidDataController {
 
             if (onSaleData.saleAmount + amount > onSaleData.amount) {
                 amount = onSaleData.amount - onSaleData.saleAmount
-                sseManager.pushAll(sseType.saleClient, {text: `${name}님 최대 갯수 초과로 ${amount}개만 구매 확인되었습니다`, onSaleData})
+                sseManager.pushAll(sseType.saleClient, {text: `${name}님 ${amount}개*`, onSaleData})
 
                 // await youtubeService.sendMessage(`${name}님 최대 갯수 초과로 ${amount}개만 구매 확인되었습니다`)
             }else if(onSaleData.maxAmount !== 0 && amount > onSaleData.maxAmount){
                 amount = onSaleData.maxAmount
-                sseManager.pushAll(sseType.saleClient, {text: `${name}님 최대 갯수 초과로 ${amount}개만 구매 확인되었습니다`, onSaleData})
+                sseManager.pushAll(sseType.saleClient, {text: `${name}님 ${amount}개*`, onSaleData})
 
                 // await youtubeService.sendMessage(`${name}님 최대 갯수 초과로 ${amount}개만 구매 확인되었습니다`)
             }else {
-                sseManager.pushAll(sseType.saleClient, {text: `${name}님 ${amount}개 확인되었습니다.`, onSaleData})
+                sseManager.pushAll(sseType.saleClient, {text: `${name}님 ${amount}개`, onSaleData})
 
                 // await youtubeService.sendMessage(`${name}님 ${amount}개 확인되었습니다.`)
             }
@@ -125,14 +124,13 @@ class BidDataController {
                 sseManager.pushAll(sseType.sale, {index: this.index, onSaleData: onSaleData})
             }
         }
-        await delay(delayTime)
-        await this.#fetch()
     }
 
     stopFetching = () => {
         this.onSaleDataList[this.index].status = 2
         sseManager.pushAll(sseType.endSale, {index: this.index, onSaleData: this.onSaleDataList[this.index]})
         this.sendEndMessage(this.onSaleDataList[this.index]).then()
+        this.#fetch().then()
         this.isEnd = true
     }
 
@@ -145,16 +143,16 @@ class BidDataController {
         const message = `####${onSaleData.name} 판매가 종료되었습니다. 구매하신분들은 확인해주세요. `
 
         await youtubeService.sendMessage(message)
-        let clientMessage = ``
-        for(let item of onSaleData.clients){
-            let msg = `[${item.name} 님 : ${item.amount}개] `
-            if( (clientMessage + msg).length >= 200) {
-                await youtubeService.sendMessage(clientMessage)
-                clientMessage = ``
-            }
-            clientMessage += msg
-        }
-        await youtubeService.sendMessage(clientMessage)
+        // let clientMessage = ``
+        // for(let item of onSaleData.clients){
+        //     let msg = `[${item.name} 님 : ${item.amount}개] `
+        //     if( (clientMessage + msg).length >= 200) {
+        //         await youtubeService.sendMessage(clientMessage)
+        //         clientMessage = ``
+        //     }
+        //     clientMessage += msg
+        // }
+        // await youtubeService.sendMessage(clientMessage)
     }
 
 }

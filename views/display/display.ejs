@@ -25,7 +25,7 @@
         window.onload = () =>{
             product = document.getElementById("product")
             price = document.getElementById("price")
-            amount = document.getElementById("amount")
+            // amount = document.getElementById("amount")
             clients = document.getElementById("clients")
 
             onSale = document.getElementById("onSale")
@@ -47,7 +47,7 @@
 
                             product.textContent = data.onSaleData.name
                             price.textContent = data.onSaleData.price
-                            amount.textContent = (parseInt(data.onSaleData.amount) - parseInt(data.onSaleData.saleAmount)).toString()
+                            // amount.textContent = (parseInt(data.onSaleData.amount) - parseInt(data.onSaleData.saleAmount)).toString()
                             return;
                         }
                         case "endSale":{
@@ -57,19 +57,19 @@
                             offSale.classList.remove("d-none")
                             offSale.classList.add("d-flex")
 
-                            let innerHtml = ""
-                            for(const item of data.client){
-                                innerHtml += `${item?.name}님 ${item?.amount}개 <br>`
-                            }
-                            clients.innerHTML = innerHtml
+                            // let innerHtml = ""
+                            // for(const item of data.client){
+                            //     innerHtml += `${item?.name}님 ${item?.amount}개 <br>`
+                            // }
+                            // clients.innerHTML = innerHtml
                             return;
                         }
                         case "sale": {
                             const data = receivedData.data
 
                             product.textContent = data.onSaleData.name
-                            price.textContent = data.onSaleData.price
-                            amount.textContent = (parseInt(data.onSaleData.amount) - parseInt(data.onSaleData.saleAmount)).toString()
+                            price.textContent = formatCurrency(data.onSaleData.price)
+                            // amount.textContent = (parseInt(data.onSaleData.amount) - parseInt(data.onSaleData.saleAmount)).toString()
                         }
                     }
 
@@ -108,7 +108,7 @@
         <div id="onSale" class="d-flex justify-content-center align-items-center flex-column">
             <h1>판매 중인 상품 : <span id="product"></span></h1>
             <h1>금액 : <span id="price"></span></h1>
-            <h1>남은 갯수 : <span id="amount"></span></h1>
+<!--            <h1>남은 갯수 : <span id="amount"></span></h1>-->
         </div>
 
         <div hidden id="offSale" class="d-none justify-content-center align-items-center flex-column">

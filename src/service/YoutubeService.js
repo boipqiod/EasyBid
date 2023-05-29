@@ -1,6 +1,7 @@
 const {google} = require('googleapis');
 
 const axios = require('axios')
+const {sseManager, sseType} = require("../data/SSEManager");
 
 class YoutubeService{
 
@@ -16,7 +17,6 @@ class YoutubeService{
         this.broadcastId = broadcastId
         await this.#getChatId()
     }
-
 
     test = async () =>{
         try {
@@ -72,6 +72,8 @@ class YoutubeService{
 
         }catch (e) {
             console.log(e)
+            this.tokenId = undefined
+            sseManager.pushAll(sseType.reset, {})
             return false
         }
     }

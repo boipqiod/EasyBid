@@ -317,6 +317,10 @@ const receivedSSE = e => {
             case "sale": {
                 const data = receivedData.data
                 saleProductUpdate(data.index, data.onSaleData.saleAmount)
+                return;
+            }
+            case "reset":{
+
             }
         }
 
