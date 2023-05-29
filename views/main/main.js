@@ -105,7 +105,6 @@ const addProduct = async () =>{
     items.push(item)
     productIndex = items.length
     await saveItem(item)
-    saveItems(items)
 }
 
 /**
@@ -125,7 +124,7 @@ const appendProduct = (index, name, price, amount, status) => {
 
     tr.innerHTML =
         `                        
-<td class="col-1">${index}</td>
+<td class="col-1">${index + 1}</td>
 <td class="col-3">${name}</td>
 <td class="col-3">${price}</td>
 <td class="col-2">${amount}</td>
@@ -160,7 +159,7 @@ const start = async (index) =>{
 
     const item = items[index]
 
-    const bool = await swal("시작", `[${item.name}] 상품 경매를 시작합니다.`, { buttons: true })
+    const bool = await swal("시작", `[${item.name}] 상품 판매를 시작합니다.`, { buttons: true })
     if(!bool) return
 
     saleIndex = index
@@ -177,7 +176,6 @@ const start = async (index) =>{
     saleProductUpdate(index)
 
     items[index].status = 1
-    saveItems()
     await startToServer(index)
 }
 
@@ -199,10 +197,11 @@ const end = async (index) =>{
 
     const item = items[index]
 
-    const bool = await swal("종료", `[${item.name}] 상품 경매를 종료합니다.`, { buttons: true })
+    const bool = await swal("종료", `[${item.name}] 상품 판매를 종료합니다.`, { buttons: true })
     if(!bool) return
 
     endProduct(index)
+    endToServer().then()
 }
 
 const endProduct = (index) =>{
@@ -218,10 +217,8 @@ const endProduct = (index) =>{
     spanSaleName.textContent = spanSaleName.textContent + " (종료)"
 
     items[index].status = 2
-    saveItems()
     isOnSale = false
     saleIndex = -1
-    endToServer().then()
 }
 
 const deleteProduct = async (index) =>{
@@ -239,10 +236,22 @@ const deleteProduct = async (index) =>{
         if(!bool) return
     }
 
-    items.splice(index, 1);
-    saveItems()
     productIndex = items.length - 1
+    await removeToServer(index)
     await addSavedProduct()
+}
+
+const removeToServer = async (index) =>{
+
+    const myHeaders = { 'Content-Type': 'application/json' }
+    const myInit  = {method: "post", body: JSON.stringify({index}), headers: myHeaders};
+    try {
+        const res = await fetch("/data/remove", myInit)
+        console.log(await res.json())
+    }catch (e) {
+        console.log(e)
+        return []
+    }
 }
 
 const formatCurrency = value=> {
@@ -260,7 +269,10 @@ const getItems = async () =>{
     const myInit  = {method: "get", headers: myHeaders};
     try {
         const res = await fetch("/data/getDataList", myInit)
-        return await res.json()
+
+        const data = await res.json()
+        console.log("getItems", data)
+        return data
     }catch (e) {
         console.log(e)
         return []

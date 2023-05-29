@@ -83,6 +83,10 @@ router.get('/display', (req, res) => {
     res.render("display/display")
 })
 
+router.get('/display/seller', (req, res) => {
+    res.render("display/seller")
+})
+
 router.get('/clear', (req, res) =>{
     youtubeService.clear()
     clearBid()

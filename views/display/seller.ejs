@@ -1,0 +1,84 @@
+<html>
+
+<head>
+    <title>경매 중인 상품</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <script src="/public/assets/dist/js/sweetalert.js"></script>
+    <script src="/public/assets/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="/public/assets/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <script type="module">
+        import SSE from "../common/sse.js";
+
+        let product
+        let price
+        let amount
+        let clients
+
+        /**
+         * @type {Element}
+         */
+        let onSale
+        let offSale
+
+        window.onload = () =>{
+            product = document.getElementById("product")
+            price = document.getElementById("price")
+            amount = document.getElementById("amount")
+            clients = document.getElementById("clients")
+
+            onSale = document.getElementById("onSale")
+            offSale = document.getElementById("offSale")
+
+            SSE.initSSE((e)=>{
+                let receivedData
+                try {
+                    receivedData = JSON.parse(e.data)
+                    console.log(receivedData)
+                    switch (receivedData.type){
+                        case "startSale":{
+                            const div = document.getElementById('div')
+                            div.innerHTML = ''
+                            return;
+                        }
+                        case "saleClient": {
+                            const data = receivedData.data
+
+                            const h1 = document.createElement('h1')
+                            const div = document.getElementById('div')
+                            h1.textContent = data.text
+                            div.appendChild(h1)
+                            setTimeout(()=>{
+                                div.removeChild(h1)
+                            }, 3000)
+                            return;
+                        }
+                    }
+
+                } catch (e) {
+                    console.log(e)
+                }
+            })
+        }
+
+    </script>
+    <style>
+        .green{
+            background-color: green;
+        }
+
+        .green h1{
+            color: black;
+            font-weight: bold;
+        }
+    </style>
+
+</head>
+<body>
+<div id="div" class="vw-100 vh-100 d-flex justify-content-center align-items-center flex-column green">
+
+
+</div>
+</body>
+</html>

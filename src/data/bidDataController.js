@@ -28,6 +28,10 @@ class BidDataController {
         return this.onSaleDataList[this.index]
     }
 
+    remove = (index) =>{
+        this.onSaleDataList.splice(index, 1);
+    }
+
     clear = () =>{
         this.onSaleDataList = []
     }
@@ -41,7 +45,7 @@ class BidDataController {
             this.index = index
             const onSaleData = this.onSaleDataList[this.index]
             onSaleData.status = 1
-            const message = `"${onSaleData.name}"상품의 경매를 시작합니다. 상품을 구매하고 싶은 만큼 숫자로 입력해주세요.`
+            const message = `"${this.index + 1}.${onSaleData.name}" 상품의 판매를 시작합니다. 상품을 구매하고 싶은 만큼 숫자로 입력해주세요.`
             youtubeService.sendMessage(message).then()
             sseManager.pushAll(sseType.startSale, {index: this.index, onSaleData: onSaleData})
             youtubeService.resetPageToken()
@@ -89,8 +93,6 @@ class BidDataController {
                 // await youtubeService.sendMessage(`${name}님 ${amount}개 확인되었습니다.`)
             }
 
-
-
             //판매한량 저장
             onSaleData.saleAmount += amount
 
@@ -128,6 +130,8 @@ class BidDataController {
     }
 
     stopFetching = () => {
+        this.onSaleDataList[this.index].status = 2
+        sseManager.pushAll(sseType.endSale, {index: this.index, onSaleData: this.onSaleDataList[this.index]})
         this.sendEndMessage(this.onSaleDataList[this.index]).then()
         this.isEnd = true
     }

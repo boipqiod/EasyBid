@@ -64,22 +64,12 @@
                             clients.innerHTML = innerHtml
                             return;
                         }
-                        case "saleClient": {
+                        case "sale": {
                             const data = receivedData.data
-
-                            const h1 = document.createElement('h1')
-                            h1.textContent = data.text
-                            onSale.appendChild(h1)
-                            setTimeout(()=>{
-                                onSale.removeChild(h1)
-                            }, 5000)
-
 
                             product.textContent = data.onSaleData.name
                             price.textContent = data.onSaleData.price
                             amount.textContent = (parseInt(data.onSaleData.amount) - parseInt(data.onSaleData.saleAmount)).toString()
-
-                            return;
                         }
                     }
 
@@ -87,6 +77,15 @@
                     console.log(e)
                 }
             })
+        }
+
+        const formatCurrency = value=> {
+            const formatter = new Intl.NumberFormat("ko-KR", {
+                style: "currency",
+                currency: "KRW",
+            });
+
+            return formatter.format(value);
         }
 
 
@@ -114,8 +113,6 @@
 
         <div hidden id="offSale" class="d-none justify-content-center align-items-center flex-column">
             <h1>상품 판매가 완료되었습니다.</h1>
-            <h1>구매자 명단</h1>
-            <br>
             <h1 id="clients"></h1>
         </div>
 
