@@ -12,6 +12,7 @@ let saleOn
 let spanSaleName
 let spanSaleAmount
 
+let buttonSaveExcel
 let buttonBidEnd
 
 let productIndex = 0
@@ -24,7 +25,7 @@ let items = []
 let isOnSale = false
 let saleIndex = -1
 
-window.onload = () =>{
+window.onload = async () =>{
     tbody = document.getElementById("tbody")
     buttonAdd = document.getElementById("button-product-add")
     inputName = document.getElementById("input-product-name")
@@ -38,8 +39,9 @@ window.onload = () =>{
     spanSaleAmount = document.getElementById("span-sale-amount")
 
     buttonBidEnd = document.getElementById("button-bid-end")
+    buttonSaveExcel = document.getElementById("button-save-excel")
 
-    addSavedProduct()
+    await addSavedProduct()
     addEvent()
     SSE.initSSE(receivedSSE)
 }
@@ -52,16 +54,12 @@ const addEvent = () =>{
     inputPrice.addEventListener('keydown', btnClick)
     inputAmount.addEventListener('keydown', btnClick)
 
-    document.getElementById("button-clear").addEventListener("click", ()=>{
-        localStorage.clear()
-        location.reload()
-    })
-
     buttonBidEnd.addEventListener('click', bidEnd)
+    buttonSaveExcel.addEventListener('click', exportToExcel)
 }
 
-const addSavedProduct = () =>{
-    items = getItems()
+const addSavedProduct = async () =>{
+    items = await getItems()
     tbody.innerHTML = ""
     productIndex = items.length
     let index = 0
@@ -94,16 +92,19 @@ const addProduct = async () =>{
 
     appendProduct(productIndex, name, price, amount, 0)
 
-    items.push({
+    const item = {
         name,
-        price,
-        amount,
-        maxAmount: max,
+        price: parseInt(price),
+        amount: parseInt(amount),
+        maxAmount: parseInt(max),
         saleAmount: 0,
         status: 0,
         clients: []
-    })
+    }
+
+    items.push(item)
     productIndex = items.length
+    await saveItem(item)
     saveItems(items)
 }
 
@@ -180,6 +181,16 @@ const start = async (index) =>{
     await startToServer(index)
 }
 
+const setStart = (index) =>{
+    const start = document.getElementById(`button-start-${index}`)
+    const end = document.getElementById(`button-end-${index}`)
+    start.setAttribute("hidden", "hidden")
+    end.removeAttribute("hidden")
+
+    saleOff.style.display = "none"
+    saleOn.style.display = "flex"
+}
+
 const end = async (index) =>{
     if(saleIndex !== index){
         swal("현재 경매 중인 상품이 아닙니다.")
@@ -231,7 +242,7 @@ const deleteProduct = async (index) =>{
     items.splice(index, 1);
     saveItems()
     productIndex = items.length - 1
-    addSavedProduct()
+    await addSavedProduct()
 }
 
 const formatCurrency = value=> {
@@ -243,14 +254,18 @@ const formatCurrency = value=> {
     return formatter.format(value);
 }
 
-const getItems = () =>{
-    const items = localStorage.getItem("bidItems")
-    if(items === null) return []
+const getItems = async () =>{
+
+    const myHeaders = { 'Content-Type': 'application/json' }
+    const myInit  = {method: "get", headers: myHeaders};
     try {
-        return JSON.parse(items)
+        const res = await fetch("/data/getDataList", myInit)
+        return await res.json()
     }catch (e) {
+        console.log(e)
         return []
     }
+
 }
 
 const saveItems = () =>{
@@ -258,23 +273,39 @@ const saveItems = () =>{
     localStorage.setItem("bidItems", JSON.stringify(items))
 }
 
+const saveItem = async (item) =>{
+
+    const myHeaders = { 'Content-Type': 'application/json' }
+    const myInit  = {method: "post", body: JSON.stringify(item), headers: myHeaders};
+    try {
+        const res = await fetch("/data/addData", myInit)
+        console.log(await res.json())
+    }catch (e) {
+        console.log(e)
+    }
+}
+
 const receivedSSE = e => {
     let receivedData
     try {
         receivedData = JSON.parse(e.data)
         console.log(receivedData)
-
-        if(receivedData === {}) return
-
-        if(receivedData.isEnd === true){
-            endProduct(receivedData.index)
-        }else{
-            items[receivedData.index].saleAmount = receivedData.saleAmount
-            items[receivedData.index].clients = receivedData.client
-
-            saveItems()
-
-            saleProductUpdate(receivedData.index, receivedData.saleAmount)
+        switch (receivedData.type){
+            case "session": return;
+            case "startSale":{
+                const data = receivedData.data
+                setStart(data.index)
+                return;
+            }
+            case "endSale":{
+                const data = receivedData.data
+                endProduct(data.index)
+                return;
+            }
+            case "sale": {
+                const data = receivedData.data
+                saleProductUpdate(data.index, data.onSaleData.saleAmount)
+            }
         }
 
     } catch (e) {
@@ -293,59 +324,76 @@ const saleProductUpdate = (index, saleAmount=0) =>{
 }
 
 const startToServer = async index =>{
-    const item = items[index]
     const myHeaders = { 'Content-Type': 'application/json', }
-    item.index = index
-
-    const myInit  = {method: "post", body: JSON.stringify(item), headers: myHeaders};
-
+    const myInit  = {method: "post", body: JSON.stringify({index}), headers: myHeaders};
     try {
         const res = await fetch("/startSale", myInit)
         console.log(await res.json())
     }catch (e) {
-
+        console.log(e)
     }
 }
 
 const endToServer = async () =>{
     const myHeaders = { 'Content-Type': 'application/json', }
-
     const myInit  = {method: "post", headers: myHeaders};
-
     try {
         const res = await fetch("/endSale", myInit)
         console.log(await res.json())
     }catch (e) {
-
+        console.log(e)
     }
 }
 
 const bidEnd = async () =>{
-    const bool = await swal("경매를 종료합니다. \n저장된 경매 내용이 초기화되며, 경매 데이터를 엑셀로 다운받습니다.", {buttons: true})
+    const bool = await swal("경매를 종료합니다. \n저장된 경매 내용이 초기화됩니다.", {buttons: true})
     if(!bool) return
 
-    const itemList = items
-
-    exportToExcel(itemList)
-
+    const myHeaders = { 'Content-Type': 'application/json', }
+    const myInit  = {method: "post", headers: myHeaders};
+    try {
+        const res = await fetch("/endBid", myInit)
+        console.log(await res.json())
+    }catch (e) {
+        console.log(e)
+    }
 }
 
-function exportToExcel(data) {
-    let ws_data = [];
-    data.forEach(item => {
-        item.clients.forEach(client => {
-            ws_data.push([item.name, item.price, item.amount, item.saleAmount, item.status, client.name, client.amount]);
-        });
-    });
+const exportToExcel = async () => {
 
-    const ws = XLSX.utils.aoa_to_sheet(ws_data);
+    const bool = await swal("현재까지 정보를 엑셀로 저장합니다.", {buttons: true})
+    if(!bool) return
 
-    // Create a new Workbook
-    const wb = XLSX.utils.book_new();
+    /**@type {[{name: string, data: string[][]}]} */
+    const excelData = [ ]
 
-    // Append the worksheet to the workbook
-    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    for (const item of items) {
+        for (const client of item.clients) {
+            const data = excelData.find((value) => value.name === client.name);
 
-    // Export the workbook to a file
-    XLSX.writeFile(wb, "output.xlsx");
+            if (data) {
+                data.data.push([item.name, client.amount, client.amount * item.price]);
+            } else {
+                excelData.push({
+                    name: client.name,
+                    data: [["상품 이름", "수량", "금액"], [item.name, client.amount, client.amount * item.price]],
+                });
+            }
+        }
+    }
+    console.log(excelData)
+
+    const workbook = XLSX.utils.book_new();
+
+    for(const data of excelData){
+        const worksheet = XLSX.utils.aoa_to_sheet(data.data);
+        XLSX.utils.book_append_sheet(workbook, worksheet, data.name);
+    }
+
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const filename = `${year}-${month}-${day}.xlsx`;
+    XLSX.writeFile(workbook, filename);
 }

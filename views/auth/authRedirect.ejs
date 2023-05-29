@@ -1,6 +1,18 @@
 <script>
     window.onload = () =>{
-        location.replace(`/?${window.location.hash.substring(1)}`)
+        console.log(window.location.href)
+
+        const url = location.href
+        const queryString = url.split('#')[1];
+
+        const paramsArray = queryString.split('&');
+        const params = {};
+        paramsArray.forEach((param) => {
+            const [key, value] = param.split('=');
+            params[key] = value;
+        });
+
+        location.replace(`/?token=${params["access_token"]}&expire=${params["expires_in"]}`)
     }
 
 </script>

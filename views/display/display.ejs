@@ -36,35 +36,52 @@
                 try {
                     receivedData = JSON.parse(e.data)
                     console.log(receivedData)
+                    switch (receivedData.type){
+                        case "session": return;
+                        case "startSale":{
+                            const data = receivedData.data
+                            onSale.classList.remove("d-none")
+                            onSale.classList.add("d-flex")
+                            offSale.classList.add("d-none")
+                            offSale.classList.remove("d-flex")
 
-                    if(receivedData === {}) return
-                    if(receivedData.isFetching) return
-
-                    if(receivedData.isEnd === true){
-                        onSale.classList.add("d-none")
-                        onSale.classList.remove("d-flex")
-                        offSale.classList.remove("d-none")
-                        offSale.classList.add("d-flex")
-
-                        let innerHtml = ""
-
-                        for(const item of receivedData.client){
-                            innerHtml += `${item?.name}님 ${item?.amount}개 <br>`
+                            product.textContent = data.onSaleData.name
+                            price.textContent = data.onSaleData.price
+                            amount.textContent = (parseInt(data.onSaleData.amount) - parseInt(data.onSaleData.saleAmount)).toString()
+                            return;
                         }
+                        case "endSale":{
+                            const data = receivedData.data
+                            onSale.classList.add("d-none")
+                            onSale.classList.remove("d-flex")
+                            offSale.classList.remove("d-none")
+                            offSale.classList.add("d-flex")
 
-                        clients.innerHTML = innerHtml
-                        return;
+                            let innerHtml = ""
+                            for(const item of data.client){
+                                innerHtml += `${item?.name}님 ${item?.amount}개 <br>`
+                            }
+                            clients.innerHTML = innerHtml
+                            return;
+                        }
+                        case "saleClient": {
+                            const data = receivedData.data
+
+                            const h1 = document.createElement('h1')
+                            h1.textContent = data.text
+                            onSale.appendChild(h1)
+                            setTimeout(()=>{
+                                onSale.removeChild(h1)
+                            }, 5000)
+
+
+                            product.textContent = data.onSaleData.name
+                            price.textContent = data.onSaleData.price
+                            amount.textContent = (parseInt(data.onSaleData.amount) - parseInt(data.onSaleData.saleAmount)).toString()
+
+                            return;
+                        }
                     }
-                    onSale.classList.remove("d-none")
-                    onSale.classList.add("d-flex")
-                    offSale.classList.add("d-none")
-                    offSale.classList.remove("d-flex")
-
-
-
-                    product.textContent = receivedData.productName
-                    price.textContent = receivedData.price
-                    amount.textContent = (parseInt(receivedData.productAmount) - parseInt(receivedData.saleAmount)).toString()
 
                 } catch (e) {
                     console.log(e)
@@ -74,9 +91,20 @@
 
 
     </script>
+    <style>
+        .green{
+            background-color: green;
+        }
+
+        .green h1{
+            color: black;
+            font-weight: bold;
+        }
+    </style>
+
 </head>
 <body>
-    <div class="vw-100 vh-100 d-flex justify-content-center align-items-center flex-column">
+    <div class="vw-100 vh-100 d-flex justify-content-center align-items-center flex-column green">
 
         <div id="onSale" class="d-flex justify-content-center align-items-center flex-column">
             <h1>판매 중인 상품 : <span id="product"></span></h1>

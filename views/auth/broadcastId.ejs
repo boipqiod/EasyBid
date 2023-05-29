@@ -12,6 +12,7 @@
             try {
                 const url = document.getElementById("input-broadcast").value
                 const apikey = document.getElementById("input-apikey").value
+                // const broadcastId = url
                 const broadcastId = url.match(/\/video\/([A-Za-z0-9_-]+)/)[1];
                 const myHeaders = {'Content-Type': 'application/json',}
 

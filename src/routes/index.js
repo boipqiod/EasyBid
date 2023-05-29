@@ -1,18 +1,20 @@
 const express = require('express');
 const youtubeService = require("../service/YoutubeService");
-const bidDataController = require("../data/bidDataController");
+const {bidDataController, clearBid} = require("../data/bidDataController");
 const router = express.Router();
 
 /* GET home page. */
 router.get('/', async (req, res, next) => {
+
+    console.log(req.query)
 
     if(!youtubeService.broadcastId || !youtubeService.apikey){
         res.redirect("/broadcast")
         return
     }
 
-    if(req.query.access_token){
-        youtubeService.tokenId = req.query.access_token
+    if(req.query.token){
+        youtubeService.tokenId = req.query.token
         res.redirect("/")
         return
     }
@@ -44,10 +46,7 @@ router.get("/main", (req, res) =>{
 
 
 router.post('/startSale', (req, res)=>{
-
-    bidDataController.setData(req.body)
-    bidDataController.startFetching().then()
-
+    bidDataController.startFetching(req.body.index).then()
     res.send(true)
 })
 
@@ -57,6 +56,12 @@ router.post('/endSale', (req, res)=>{
 
     res.send(true)
 })
+router.post('/endBid', (req, res)=>{
+    clearBid()
+    res.send(true)
+})
+
+
 
 router.post('/broadcastId', (req, res)=>{
     if(req.body.broadcastId && req.body.apikey){
@@ -87,5 +92,11 @@ router.get('/user', (req, res)=>{
     res.render("display/user")
 
 })
+
+router.get('/test', (req, res)=>{
+    res.render("main/main")
+
+})
+
 
 module.exports = router;

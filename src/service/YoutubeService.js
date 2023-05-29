@@ -20,14 +20,11 @@ class YoutubeService{
 
     test = async () =>{
         try {
-            const test1 = await this.#getChatId()
-            const test2 = await this.getChat()
-
-            if(!test1) {
+            if(!await this.#getChatId()) {
                 console.log("getChatId False")
                 return false
             }
-            if(!test2){
+            if(!await this.getChat()){
                 console.log("getChat False")
                 return false
             }
@@ -89,7 +86,6 @@ class YoutubeService{
                 }})
 
             const data = res.data.items[0]
-
             // console.log(res.data.items[0])
             this.#chatId = data.snippet.liveChatId
             return true
