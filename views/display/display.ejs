@@ -46,7 +46,7 @@
                             offSale.classList.remove("d-flex")
 
                             product.textContent = data.onSaleData.name
-                            price.textContent = data.onSaleData.price
+                            price.textContent = formatCurrency(data.onSaleData.price)
                             // amount.textContent = (parseInt(data.onSaleData.amount) - parseInt(data.onSaleData.saleAmount)).toString()
                             return;
                         }

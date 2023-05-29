@@ -53,10 +53,9 @@ class BidDataController {
         }catch (e) {
             console.log(e)
         }
-
     }
 
-    #fetch = async () => {
+    fetch = async () => {
         if(this.isEnd) return
 
         const onSaleData = this.onSaleDataList[this.index]
@@ -130,7 +129,7 @@ class BidDataController {
         this.onSaleDataList[this.index].status = 2
         sseManager.pushAll(sseType.endSale, {index: this.index, onSaleData: this.onSaleDataList[this.index]})
         this.sendEndMessage(this.onSaleDataList[this.index]).then()
-        this.#fetch().then()
+        this.fetch().then()
         this.isEnd = true
     }
 
@@ -140,8 +139,7 @@ class BidDataController {
      */
     sendEndMessage = async (onSaleData) => {
         if(this.isEnd) return
-        const message = `####${onSaleData.name} 판매가 종료되었습니다. 구매하신분들은 확인해주세요. `
-
+        const message = `"${this.index + 1}.${onSaleData.name}" 상품 판매가 종료되었습니다. 구매하신분들은 확인해주세요.`
         await youtubeService.sendMessage(message)
         // let clientMessage = ``
         // for(let item of onSaleData.clients){

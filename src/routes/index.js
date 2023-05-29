@@ -56,10 +56,17 @@ router.post('/endSale', (req, res)=>{
 
     res.send(true)
 })
+
 router.post('/endBid', (req, res)=>{
     clearBid()
     res.send(true)
 })
+
+router.post('/refresh', (req, res)=>{
+    bidDataController.fetch().then()
+    res.send(true)
+})
+
 
 
 

@@ -28,7 +28,7 @@
             background-color: #272727;
         }
 
-        .completed{
+        .completed {
             background-color: #214fff;
         }
 
@@ -39,11 +39,11 @@
     <div style="width: 900px" class="d-flex flex-column justify-content-center text-center">
         <h1 class="m-5">쉬운 경매 상품 등록 프로그램</h1>
 
-        <div class="w-100 m-2">
-            <a class="btn btn-secondary w-100" href="/display/seller" target="_blank">구매자 리스트 링크 열기</a>
-            <a class="btn btn-secondary w-100" href="/display" target="_blank">판매 상품 링크 열기</a>
-        </div>
-        <div class="card w-100 m-2">
+        <a class="btn btn-secondary w-100 m-1" href="/auth/sign" target="_self">다시 로그인하기</a>
+        <a class="btn btn-secondary w-100 m-1" href="/display/seller" target="_blank">구매자 리스트 링크 열기</a>
+        <a class="btn btn-secondary w-100 m-1" href="/display" target="_blank">판매 상품 링크 열기</a>
+
+        <div class="card w-100 m-1">
             <div class="card-header">
                 판매중인 상품
             </div>
@@ -55,8 +55,8 @@
                 <p>판매 갯수 : <span id="span-sale-amount"></span></p>
             </div>
         </div>
-
-        <div class="card w-100 m-2">
+        <hr>
+        <div class="card w-100 m-1">
             <div class="card-header">
                 경매 상품 추가
             </div>
@@ -69,25 +69,31 @@
                         </div>
                         <div class="col">
                             <label for="input-product-price">개당 금액</label>
-                            <input type="number" id="input-product-price" class="form-control m-1" placeholder="개당 금액" min="1">
+                            <input type="number" id="input-product-price" class="form-control m-1" placeholder="개당 금액"
+                                   min="1">
                         </div>
                         <div class="col">
                             <label for="input-product-amount">판매 갯수</label>
-                            <input type="number" id="input-product-amount" class="form-control m-1" placeholder="판매 갯수" min="1">
+                            <input type="number" id="input-product-amount" class="form-control m-1" placeholder="판매 갯수"
+                                   min="1">
                         </div>
                         <div class="col">
                             <label for="input-product-amount">최대 구매 갯수</label>
-                            <input type="number" id="input-product-max" class="form-control m-1" placeholder="최대 구매 갯수" min="1" value="0">
+                            <input type="number" id="input-product-max" class="form-control m-1" placeholder="최대 구매 갯수"
+                                   min="1" value="0">
                         </div>
                     </div>
 
-<!--                    <button id="button-clear" class="btn btn-secondary">clear</button>-->
+                    <!--                    <button id="button-clear" class="btn btn-secondary">clear</button>-->
                 </div>
                 <button id="button-product-add" class="btn btn-primary w-100">+</button>
             </div>
         </div>
         <hr>
-        <div class="card w-100 m-2">
+        <button id="button-refresh-chat" class="btn btn-info w-100 m-1">댓글 읽어 오기</button>
+
+        <hr>
+        <div class="card w-100 m-1">
             <div class="card-header">
                 등록된 상품
             </div>
@@ -110,10 +116,10 @@
         </div>
 
         <div class="w-100 m-2">
-            <button id="button-save-excel" class="btn btn-warning w-100"> 엑셀로 저장하기 </button>
+            <button id="button-save-excel" class="btn btn-warning w-100"> 엑셀로 저장하기</button>
         </div>
         <div class="w-100 m-2">
-            <button id="button-bid-end" class="btn btn-warning w-100"> 경매 종료하기 </button>
+            <button id="button-bid-end" class="btn btn-warning w-100"> 경매 종료하기</button>
         </div>
     </div>
 </div>
