@@ -85,6 +85,7 @@ router.get('/display', (req, res) => {
 
 router.get('/clear', (req, res) =>{
     youtubeService.clear()
+    clearBid()
     res.redirect('/')
 })
 
