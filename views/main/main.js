@@ -448,18 +448,19 @@ const exportToExcel = async () => {
     /**@type {[{name: string, data: string[][]}]} */
     const excelData = [ ]
 
-    let i = 0
+    let i = 1
     for (const item of items) {
         for (const client of item.clients) {
             const name = removeSpecialCharacters(client.name)
+            console.log(client.name, name)
             const data = excelData.find((value) => value.name === name);
 
             if (data) {
                 data.data.push(["", item.name, client.amount, item.price, client.amount * item.price]);
             } else {
-
+                i++
                 excelData.push({
-                    name: `${i++}번 손님`,
+                    name: `${i}번 손님`,
                     data: [["고객명", "상품 이름", "수량", "개당 금액", "금액"], [client.name, item.name, client.amount, item.price, client.amount * item.price]],
                 });
             }
