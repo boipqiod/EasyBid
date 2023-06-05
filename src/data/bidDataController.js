@@ -97,6 +97,7 @@ class BidDataController {
     }
 
     saleItem = async (name, amount) =>{
+        if(typeof amount === 'string') amount = parseInt(amount)
         const onSaleData = this.onSaleDataList[this.index]
 
         if (onSaleData.saleAmount + amount > onSaleData.amount) {

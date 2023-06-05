@@ -44,7 +44,7 @@ router.get('/getData', (req, res) => {
 })
 router.post('/force', (req, res) => {
     const {name, amount} = req.body
-
+    console.log('/data/force', name, amount)
     bidDataController.saleItem(name, amount).then()
 
     res.send(true)
