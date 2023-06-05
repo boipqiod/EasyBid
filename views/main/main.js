@@ -448,19 +448,16 @@ const exportToExcel = async () => {
     /**@type {[{name: string, data: string[][]}]} */
     const excelData = [ ]
 
-    let i = 1
     for (const item of items) {
         for (const client of item.clients) {
-            const name = removeSpecialCharacters(client.name)
-            console.log(client.name, name)
-            const data = excelData.find((value) => value.name === name);
+            // const name = removeSpecialCharacters(client.name)
+            const data = excelData.find((value) => value.name === client.name);
 
             if (data) {
                 data.data.push(["", item.name, client.amount, item.price, client.amount * item.price]);
             } else {
-                i++
                 excelData.push({
-                    name: `${i}번 손님`,
+                    name: client.name,
                     data: [["고객명", "상품 이름", "수량", "개당 금액", "금액"], [client.name, item.name, client.amount, item.price, client.amount * item.price]],
                 });
             }
@@ -470,9 +467,10 @@ const exportToExcel = async () => {
 
     const workbook = XLSX.utils.book_new();
 
+    let i = 1
     for(const data of excelData){
         const worksheet = XLSX.utils.aoa_to_sheet(data.data);
-        XLSX.utils.book_append_sheet(workbook, worksheet, data.name);
+        XLSX.utils.book_append_sheet(workbook, worksheet, `${i++}번 손님`);
     }
 
     const today = new Date();
