@@ -17,6 +17,8 @@ class BidDataController {
 
 
     addOnSale = (fileName, onSaleData) =>{
+        if(!this.onSaleDataList) this.onSaleDataList = []
+
         this.onSaleDataList.push(onSaleData)
         this.fileName = fileName
         FileUtil.saveData(fileName, this.onSaleDataList)

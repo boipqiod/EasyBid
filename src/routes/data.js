@@ -14,7 +14,6 @@ router.post('/addData', (req, res, next) => {
     }
 
 
-
     res.send(true)
 })
 
