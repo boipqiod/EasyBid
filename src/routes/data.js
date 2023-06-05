@@ -5,9 +5,15 @@ const router = express.Router();
 
 router.post('/addData', (req, res, next) => {
 
-    const {name, price, amount, maxAmount} = req.body.item
-    const fileName = req.body.name
-    bidDataController.addOnSale(fileName, new OnSaleData({name, price, amount, maxAmount}))
+    try {
+        const {name, price, amount, maxAmount} = req.body.item
+        const fileName = req.body.name
+        bidDataController.addOnSale(fileName, new OnSaleData({name, price, amount, maxAmount}))
+    }catch (e) {
+        console.log(e)
+    }
+
+
 
     res.send(true)
 })
