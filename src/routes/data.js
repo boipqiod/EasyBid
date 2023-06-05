@@ -42,6 +42,13 @@ router.get('/getData', (req, res) => {
     const bidData = bidDataController.getOnSale()
     res.send(bidData)
 })
+router.get('/force', (req, res) => {
+    const {name, amount} = req.body
+
+    bidDataController.saleItem(name, amount).then()
+
+    res.send(true)
+})
 
 
 module.exports = router;

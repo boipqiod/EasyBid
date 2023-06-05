@@ -76,7 +76,6 @@ class BidDataController {
     fetch = async () => {
         if(this.isEnd) return
 
-        const onSaleData = this.onSaleDataList[this.index]
 
         const response = await youtubeService.getChat()
         const delayTime = response.pollingIntervalMillis ? response.pollingIntervalMillis :  1000
@@ -93,55 +92,61 @@ class BidDataController {
 
             console.log(name, amount)
 
-            if (onSaleData.saleAmount + amount > onSaleData.amount) {
-                amount = onSaleData.amount - onSaleData.saleAmount
-                sseManager.pushAll(sseType.saleClient, {text: `${name}님 ${amount}개*`, onSaleData})
-
-                // await youtubeService.sendMessage(`${name}님 최대 갯수 초과로 ${amount}개만 구매 확인되었습니다`)
-            }else if(onSaleData.maxAmount !== 0 && amount > onSaleData.maxAmount){
-                amount = onSaleData.maxAmount
-                sseManager.pushAll(sseType.saleClient, {text: `${name}님 ${amount}개*`, onSaleData})
-
-                // await youtubeService.sendMessage(`${name}님 최대 갯수 초과로 ${amount}개만 구매 확인되었습니다`)
-            }else {
-                sseManager.pushAll(sseType.saleClient, {text: `${name}님 ${amount}개`, onSaleData})
-
-                // await youtubeService.sendMessage(`${name}님 ${amount}개 확인되었습니다.`)
-            }
-
-            //판매한량 저장
-            onSaleData.saleAmount += amount
-
-            //합치기
-            let isBreak = false
-            for(let i = 0; i < onSaleData.clients.length; i ++ ){
-                if(onSaleData.clients[i].name === name){
-                    onSaleData.clients[i].amount += amount
-                    isBreak = true
-                    break
-                }
-            }
-
-            if(!isBreak){
-                //구매한 사람 저장
-                onSaleData.clients.push({
-                    name: name,
-                    amount: amount
-                })
-            }
-
-            //판매 완료 확인
-            if (onSaleData.saleAmount === onSaleData.amount) {
-                onSaleData.status = 2
-                sseManager.pushAll(sseType.endSale, {index: this.index, onSaleData: onSaleData})
-                this.stopFetching()
-                await this.sendEndMessage(onSaleData)
-            }else{
-                sseManager.pushAll(sseType.sale, {index: this.index, onSaleData: onSaleData})
-            }
-
-            FileUtil.saveData(this.fileName, this.onSaleDataList)
+            await this.saleItem(name, amount)
         }
+    }
+
+    saleItem = async (name, amount) =>{
+        const onSaleData = this.onSaleDataList[this.index]
+
+        if (onSaleData.saleAmount + amount > onSaleData.amount) {
+            amount = onSaleData.amount - onSaleData.saleAmount
+            sseManager.pushAll(sseType.saleClient, {text: `${name}님 ${amount}개*`, onSaleData})
+
+            // await youtubeService.sendMessage(`${name}님 최대 갯수 초과로 ${amount}개만 구매 확인되었습니다`)
+        }else if(onSaleData.maxAmount !== 0 && amount > onSaleData.maxAmount){
+            amount = onSaleData.maxAmount
+            sseManager.pushAll(sseType.saleClient, {text: `${name}님 ${amount}개*`, onSaleData})
+
+            // await youtubeService.sendMessage(`${name}님 최대 갯수 초과로 ${amount}개만 구매 확인되었습니다`)
+        }else {
+            sseManager.pushAll(sseType.saleClient, {text: `${name}님 ${amount}개`, onSaleData})
+
+            // await youtubeService.sendMessage(`${name}님 ${amount}개 확인되었습니다.`)
+        }
+
+        //판매한량 저장
+        onSaleData.saleAmount += amount
+
+        //합치기
+        let isBreak = false
+        for(let i = 0; i < onSaleData.clients.length; i ++ ){
+            if(onSaleData.clients[i].name === name){
+                onSaleData.clients[i].amount += amount
+                isBreak = true
+                break
+            }
+        }
+
+        if(!isBreak){
+            //구매한 사람 저장
+            onSaleData.clients.push({
+                name: name,
+                amount: amount
+            })
+        }
+
+        //판매 완료 확인
+        if (onSaleData.saleAmount === onSaleData.amount) {
+            onSaleData.status = 2
+            sseManager.pushAll(sseType.endSale, {index: this.index, onSaleData: onSaleData})
+            this.stopFetching()
+            await this.sendEndMessage(onSaleData)
+        }else{
+            sseManager.pushAll(sseType.sale, {index: this.index, onSaleData: onSaleData})
+        }
+
+        FileUtil.saveData(this.fileName, this.onSaleDataList)
     }
 
     stopFetching = () => {

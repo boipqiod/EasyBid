@@ -70,6 +70,26 @@ const addEvent = () =>{
     buttonRefreshChat.addEventListener('click', refreshChat)
 
     buttonReload.addEventListener('click', reloadAction)
+
+    document.getElementById('button-input-force').addEventListener('click', async ()=>{
+        const bool = await swal("전송", "정말 전송하시겠습니까?", { buttons: true })
+        if(!bool) return
+
+        const name = document.getElementById('input-force-name').value
+        const amount = document.getElementById('input-force-amount').value
+
+        const myHeaders = { 'Content-Type': 'application/json', }
+        const myInit  = {method: "post", body: JSON.stringify({name, amount}), headers: myHeaders};
+        try {
+            const res = await fetch("/data/force", myInit)
+            console.log(await res.json())
+            await addSavedProduct()
+
+        }catch (e) {
+            console.log(e)
+        }
+    })
+
 }
 
 const reloadAction = async () =>{
