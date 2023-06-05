@@ -37,10 +37,12 @@ class BidDataController {
 
     remove = (index) =>{
         this.onSaleDataList.splice(index, 1);
+        FileUtil.saveData(this.fileName, this.onSaleDataList)
     }
 
     clear = () =>{
         this.onSaleDataList = []
+        FileUtil.saveData(this.fileName, this.onSaleDataList)
     }
 
     /**
