@@ -9,6 +9,8 @@ let buttonAdd
 let saleOff
 let saleOn
 
+let fileName
+
 let spanSaleName
 let spanSaleAmount
 
@@ -43,6 +45,10 @@ window.onload = async () =>{
     buttonSaveExcel = document.getElementById("button-save-excel")
     buttonRefreshChat = document.getElementById("button-refresh-chat")
 
+    fileName = document.getElementById('input_name')
+
+    await reloadData()
+
     await addSavedProduct()
     addEvent()
     SSE.initSSE(receivedSSE)
@@ -60,6 +66,24 @@ const addEvent = () =>{
     buttonSaveExcel.addEventListener('click', exportToExcel)
     buttonRefreshChat.addEventListener('click', refreshChat)
 
+}
+
+const reloadData = async () =>{
+    const name = localStorage.getItem('fileName')
+
+    console.log(name)
+
+    if(!name) return
+
+    fileName.value = name
+    const myHeaders = { 'Content-Type': 'application/json', }
+    const myInit  = {method: "post", body: JSON.stringify({name}), headers: myHeaders};
+    try {
+        const res = await fetch("/data/reload", myInit)
+        console.log(await res.json())
+    }catch (e) {
+        console.log(e)
+    }
 }
 
 const addSavedProduct = async () =>{
@@ -291,8 +315,9 @@ const saveItems = () =>{
 
 const saveItem = async (item) =>{
 
+    localStorage.setItem('fileName', fileName.value)
     const myHeaders = { 'Content-Type': 'application/json' }
-    const myInit  = {method: "post", body: JSON.stringify(item), headers: myHeaders};
+    const myInit  = {method: "post", body: JSON.stringify({name: fileName.value, item}), headers: myHeaders};
     try {
         const res = await fetch("/data/addData", myInit)
         console.log(await res.json())
@@ -325,6 +350,11 @@ const receivedSSE = e => {
             }
             case "reset":{
                 location.reload()
+                return;
+            }
+            case "login":{
+                window.open("/auth/sign", '_blank')
+                swal("로그인 창이 열렸습니다.")
             }
         }
 
@@ -400,16 +430,397 @@ const exportToExcel = async () => {
     /**@type {[{name: string, data: string[][]}]} */
     const excelData = [ ]
 
+    const items = [
+        {
+            "name": "주방 다용도 가위(3개)",
+            "price": 250,
+            "amount": 5000,
+            "maxAmount": 0,
+            "saleAmount": 0,
+            "status": 0,
+            "clients": []
+        },
+        {
+            "name": "주방 다용도 가위(3개)",
+            "price": 250,
+            "amount": 5000,
+            "maxAmount": 0,
+            "saleAmount": 0,
+            "status": 0,
+            "clients": []
+        },
+        {
+            "name": "주방 다용도 가위(3개)",
+            "price": 250,
+            "amount": 5000,
+            "maxAmount": 0,
+            "saleAmount": 0,
+            "status": 0,
+            "clients": []
+        },
+        {
+            "name": "주방 다용도 가위(3개)",
+            "price": 5000,
+            "amount": 250,
+            "maxAmount": 0,
+            "saleAmount": 0,
+            "status": 0,
+            "clients": []
+        },
+        {
+            "name": "스티커형 후크(2봉지)",
+            "price": 3000,
+            "amount": 70,
+            "maxAmount": 0,
+            "saleAmount": 0,
+            "status": 0,
+            "clients": []
+        },
+        {
+            "name": "선풍기",
+            "price": 25000,
+            "amount": 20,
+            "maxAmount": 0,
+            "saleAmount": 0,
+            "status": 2,
+            "clients": []
+        },
+        {
+            "name": "젤 방석",
+            "price": 8000,
+            "amount": 40,
+            "maxAmount": 0,
+            "saleAmount": 0,
+            "status": 2,
+            "clients": []
+        },
+        {
+            "name": "요술 의자",
+            "price": 8000,
+            "amount": 40,
+            "maxAmount": 0,
+            "saleAmount": 0,
+            "status": 0,
+            "clients": []
+        },
+        {
+            "name": "쏠라작업등",
+            "price": 30000,
+            "amount": 40,
+            "maxAmount": 0,
+            "saleAmount": 1,
+            "status": 2,
+            "clients": [
+                {
+                    "name": "김신섭[만수산]",
+                    "amount": 1
+                }
+            ]
+        },
+        {
+            "name": "헤드렌턴",
+            "price": 9000,
+            "amount": 30,
+            "maxAmount": 0,
+            "saleAmount": 0,
+            "status": 2,
+            "clients": []
+        },
+        {
+            "name": "육포(3개)",
+            "price": 5000,
+            "amount": 180,
+            "maxAmount": 0,
+            "saleAmount": 1,
+            "status": 2,
+            "clients": [
+                {
+                    "name": "유튜브키위",
+                    "amount": 1
+                }
+            ]
+        },
+        {
+            "name": "쌀과자(2개)",
+            "price": 5000,
+            "amount": 46,
+            "maxAmount": 0,
+            "saleAmount": 0,
+            "status": 0,
+            "clients": []
+        },
+        {
+            "name": "스티커형 후크 ",
+            "price": 2000,
+            "amount": 46,
+            "maxAmount": 0,
+            "saleAmount": 0,
+            "status": 2,
+            "clients": []
+        },
+        {
+            "name": "스티커형 후크(2봉지)",
+            "price": 3000,
+            "amount": 46,
+            "maxAmount": 0,
+            "saleAmount": 0,
+            "status": 2,
+            "clients": []
+        },
+        {
+            "name": "금 화장품 남 4종",
+            "price": 15000,
+            "amount": 14,
+            "maxAmount": 0,
+            "saleAmount": 1,
+            "status": 2,
+            "clients": [
+                {
+                    "name": "김종오",
+                    "amount": 1
+                }
+            ]
+        },
+        {
+            "name": "금 화장품 여 8종",
+            "price": 30000,
+            "amount": 18,
+            "maxAmount": 0,
+            "saleAmount": 0,
+            "status": 2,
+            "clients": []
+        },
+        {
+            "name": "라텍스 배게",
+            "price": 10000,
+            "amount": 40,
+            "maxAmount": 0,
+            "saleAmount": 0,
+            "status": 2,
+            "clients": []
+        },
+        {
+            "name": "3단봉",
+            "price": 15000,
+            "amount": 15,
+            "maxAmount": 0,
+            "saleAmount": 0,
+            "status": 2,
+            "clients": []
+        },
+        {
+            "name": "3단봉",
+            "price": 15000,
+            "amount": 10,
+            "maxAmount": 0,
+            "saleAmount": 0,
+            "status": 2,
+            "clients": []
+        },
+        {
+            "name": "블루투스 마이크",
+            "price": 9000,
+            "amount": 40,
+            "maxAmount": 0,
+            "saleAmount": 0,
+            "status": 2,
+            "clients": []
+        },
+        {
+            "name": "스텐드 등",
+            "price": 8000,
+            "amount": 40,
+            "maxAmount": 0,
+            "saleAmount": 1,
+            "status": 2,
+            "clients": [
+                {
+                    "name": "김종오",
+                    "amount": 1
+                }
+            ]
+        },
+        {
+            "name": "쏠라 실내등 400W",
+            "price": 40000,
+            "amount": 5,
+            "maxAmount": 0,
+            "saleAmount": 2,
+            "status": 2,
+            "clients": [
+                {
+                    "name": "김신섭[만수산]",
+                    "amount": 2
+                }
+            ]
+        },
+        {
+            "name": "5구 멀티충전기",
+            "price": 10000,
+            "amount": 5,
+            "maxAmount": 0,
+            "saleAmount": 1,
+            "status": 2,
+            "clients": [
+                {
+                    "name": "김종오",
+                    "amount": 1
+                }
+            ]
+        },
+        {
+            "name": "산양유 단백질",
+            "price": 10000,
+            "amount": 24,
+            "maxAmount": 0,
+            "saleAmount": 1,
+            "status": 2,
+            "clients": [
+                {
+                    "name": "김태환",
+                    "amount": 1
+                }
+            ]
+        },
+        {
+            "name": "사각센서 엣지",
+            "price": 7000,
+            "amount": 24,
+            "maxAmount": 0,
+            "saleAmount": 2,
+            "status": 2,
+            "clients": [
+                {
+                    "name": "김태환",
+                    "amount": 2
+                }
+            ]
+        },
+        {
+            "name": "사각직부 엣",
+            "price": 6000,
+            "amount": 24,
+            "maxAmount": 0,
+            "saleAmount": 0,
+            "status": 0,
+            "clients": []
+        },
+        {
+            "name": "사각직부 엣지",
+            "price": 6000,
+            "amount": 24,
+            "maxAmount": 0,
+            "saleAmount": 1,
+            "status": 2,
+            "clients": [
+                {
+                    "name": "김태환",
+                    "amount": 1
+                }
+            ]
+        },
+        {
+            "name": "쏠라 벽부등 소",
+            "price": 5000,
+            "amount": 24,
+            "maxAmount": 0,
+            "saleAmount": 2,
+            "status": 2,
+            "clients": [
+                {
+                    "name": "김종오",
+                    "amount": 2
+                }
+            ]
+        },
+        {
+            "name": "쏠라 카메라형",
+            "price": 9000,
+            "amount": 24,
+            "maxAmount": 0,
+            "saleAmount": 0,
+            "status": 2,
+            "clients": []
+        },
+        {
+            "name": "쏠라 2구",
+            "price": 10000,
+            "amount": 24,
+            "maxAmount": 0,
+            "saleAmount": 0,
+            "status": 2,
+            "clients": []
+        },
+        {
+            "name": "쏠라 수목등",
+            "price": 9000,
+            "amount": 24,
+            "maxAmount": 0,
+            "saleAmount": 0,
+            "status": 2,
+            "clients": []
+        },
+        {
+            "name": "쏠라 사각대형",
+            "price": 15000,
+            "amount": 24,
+            "maxAmount": 0,
+            "saleAmount": 1,
+            "status": 2,
+            "clients": [
+                {
+                    "name": "김종오",
+                    "amount": 1
+                }
+            ]
+        },
+        {
+            "name": "쏠라 투광등100W",
+            "price": 40000,
+            "amount": 24,
+            "maxAmount": 0,
+            "saleAmount": 1,
+            "status": 2,
+            "clients": [
+                {
+                    "name": "김태환",
+                    "amount": 1
+                }
+            ]
+        },
+        {
+            "name": "요술의자",
+            "price": 8000,
+            "amount": 100,
+            "maxAmount": 0,
+            "saleAmount": 6,
+            "status": 2,
+            "clients": [
+                {
+                    "name": "김태환",
+                    "amount": 2
+                },
+                {
+                    "name": "정맨",
+                    "amount": 4
+                }
+            ]
+        }
+    ]
+
     for (const item of items) {
         for (const client of item.clients) {
-            const data = excelData.find((value) => value.name === client.name);
+            const name = removeSpecialCharacters(client.name)
+
+            const data = excelData.find((value) => value.name === name);
 
             if (data) {
-                data.data.push([item.name, client.amount, client.amount * item.price]);
+                data.data.push(["", item.name, client.amount, client.amount * item.price, item.price]);
             } else {
+
                 excelData.push({
-                    name: client.name,
-                    data: [["상품 이름", "수량", "금액"], [item.name, client.amount, client.amount * item.price]],
+                    name: name,
+                    data: [["고객명", "상품 이름", "수량", "금액", "개당 금액"], [client.name, item.name, client.amount, client.amount * item.price, item.price]],
                 });
             }
         }
@@ -429,4 +840,12 @@ const exportToExcel = async () => {
     const day = String(today.getDate()).padStart(2, '0');
     const filename = `${year}-${month}-${day}.xlsx`;
     XLSX.writeFile(workbook, filename);
+}
+
+function removeSpecialCharacters(str) {
+    // 특수 문자 패턴을 정규식으로 표현
+    var pattern = /[^\w\s]/g;
+
+    // 정규식에 매치되는 특수 문자 제거 후 반환
+    return str.replace(pattern, '');
 }

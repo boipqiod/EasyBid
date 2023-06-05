@@ -5,8 +5,9 @@ const router = express.Router();
 
 router.post('/addData', (req, res, next) => {
 
-    const {name, price, amount, maxAmount} = req.body
-    bidDataController.addOnSale(new OnSaleData({name, price, amount, maxAmount}))
+    const {name, price, amount, maxAmount} = req.body.item
+    const fileName = req.body.name
+    bidDataController.addOnSale(fileName, new OnSaleData({name, price, amount, maxAmount}))
 
     res.send(true)
 })
@@ -17,6 +18,13 @@ router.post('/remove', (req, res) =>{
     console.log(index)
     bidDataController.remove(index)
 
+    res.send(true)
+})
+
+router.post('/reload', (req, res) =>{
+
+    const fileName = req.body.name
+    bidDataController.reloadData(fileName)
     res.send(true)
 })
 

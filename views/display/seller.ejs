@@ -2,7 +2,7 @@
 
 <head>
     <title>구매자 리스트</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
 
     <script src="/public/assets/dist/js/sweetalert.js"></script>
     <script src="/public/assets/dist/js/bootstrap.bundle.min.js"></script>
@@ -22,7 +22,7 @@
         let onSale
         let offSale
 
-        window.onload = () =>{
+        window.onload = () => {
             product = document.getElementById("product")
             price = document.getElementById("price")
             amount = document.getElementById("amount")
@@ -31,13 +31,19 @@
             onSale = document.getElementById("onSale")
             offSale = document.getElementById("offSale")
 
-            SSE.initSSE((e)=>{
+            document.getElementById("input_range").addEventListener('input', (e) => {
+                for (const item of document.querySelectorAll("h1")) {
+                    item.style.fontSize = `${e.target.value}px`
+                }
+            })
+
+            SSE.initSSE((e) => {
                 let receivedData
                 try {
                     receivedData = JSON.parse(e.data)
                     console.log(receivedData)
-                    switch (receivedData.type){
-                        case "startSale":{
+                    switch (receivedData.type) {
+                        case "startSale": {
                             const div = document.getElementById('div')
                             div.innerHTML = ''
                             return;
@@ -54,6 +60,12 @@
                             // }, 3000)
                             return;
                         }
+                        case "startEnd": {
+                            setTimeout(() => {
+                                document.getElementById('div').innerHTML = ""
+                            }, 10 * 1000)
+                        }
+
                     }
 
                 } catch (e) {
@@ -64,20 +76,24 @@
 
     </script>
     <style>
-        .green{
+        .green {
             background-color: green;
         }
 
-        .green h1{
+        .green h1 {
             color: black;
             font-weight: bold;
+            font-size: 100px;
         }
     </style>
 
 </head>
 <body>
 <div class="vw-100 vh-100 d-flex justify-content-center align-items-center flex-column green row">
+    <input style="position: fixed; top: 50px; width: 50vw" id="input_range" type="range" value="100" min="30" max="400">
+
     <div id="div" class="row text-center">
+        <h1 class="col-4"></h1>
     </div>
 </div>
 </body>

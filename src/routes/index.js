@@ -16,7 +16,7 @@ router.get('/', async (req, res, next) => {
     }
 
     if(req.query.token){
-        youtubeService.tokenId = req.query.token
+        youtubeService.setTokenId(req.query.token)
         res.redirect("/")
         return
     }

@@ -16,6 +16,8 @@
         let amount
         let clients
 
+        let range
+
         /**
          * @type {Element}
          */
@@ -30,6 +32,13 @@
 
             onSale = document.getElementById("onSale")
             offSale = document.getElementById("offSale")
+            range = document.getElementById("input_range")
+
+            range.addEventListener('input', (e)=>{
+                for(const item of document.querySelectorAll("h1")){
+                    item.style.fontSize = `${e.target.value}px`
+                }
+            })
 
             SSE.initSSE((e)=>{
                 let receivedData
@@ -98,12 +107,15 @@
         .green h1{
             color: black;
             font-weight: bold;
+            font-size: 100px;
         }
     </style>
 
 </head>
 <body>
+
     <div class="vw-100 vh-100 d-flex justify-content-center align-items-center flex-column green">
+        <input style="position: fixed; top: 50px; width: 50vw" id="input_range" type="range" value="100" min="30" max="400">
 
         <div id="onSale" class="d-flex justify-content-center align-items-center flex-column">
             <h1>판매 중인 상품 : <span id="product"></span></h1>
@@ -112,7 +124,7 @@
         </div>
 
         <div hidden id="offSale" class="d-none justify-content-center align-items-center flex-column">
-            <h1>상품 판매가 완료되었습니다.</h1>
+<!--            <h1>상품 판매가 완료되었습니다.</h1>-->
             <h1 id="clients"></h1>
         </div>
 

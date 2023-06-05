@@ -43,7 +43,8 @@ const sseType = {
     endSale: "endSale",
     sale: "sale",
     saleClient: "saleClient",
-    reset: "reset"
+    reset: "reset",
+    login: "login"
 }
 
 

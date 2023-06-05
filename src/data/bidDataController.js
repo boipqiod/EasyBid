@@ -1,6 +1,7 @@
 const youtubeService = require("../service/YoutubeService");
 const {sseManager, sseType} = require("./SSEManager");
 const {delay} = require("../common/common");
+const {FileUtil} = require("../common/FileUtil");
 
 class BidDataController {
 
@@ -11,13 +12,19 @@ class BidDataController {
     /** @type{OnSaleData[]}*/
     onSaleDataList = []
 
+    fileName
     isEnd
 
-    /**
-     * @param {OnSaleData} onSaleData
-     */
-    addOnSale = (onSaleData) =>{
+
+    addOnSale = (fileName, onSaleData) =>{
         this.onSaleDataList.push(onSaleData)
+        this.fileName = fileName
+        FileUtil.saveData(fileName, this.onSaleDataList)
+    }
+
+    reloadData = (fileName) =>{
+        this.onSaleDataList = FileUtil.getData(fileName)
+        return this.onSaleDataList
     }
 
     getOnSaleList = () =>{
@@ -43,9 +50,10 @@ class BidDataController {
         try {
             this.isEnd = false
             this.index = index
+            this.fileName = `${Date.now()}_bid.json`
             const onSaleData = this.onSaleDataList[this.index]
             onSaleData.status = 1
-            const message = `"${this.index + 1}.${onSaleData.name}" 상품의 판매를 시작합니다. 상품을 구매하고 싶은 만큼 숫자로 입력해주세요.`
+            const message = `"${onSaleData.name}" 상품의 판매를 시작합니다. 상품을 구매하고 싶은 만큼 숫자로 입력해주세요.`
             youtubeService.sendMessage(message).then()
             sseManager.pushAll(sseType.startSale, {index: this.index, onSaleData: onSaleData})
             youtubeService.resetPageToken()
@@ -118,10 +126,11 @@ class BidDataController {
                 sseManager.pushAll(sseType.endSale, {index: this.index, onSaleData: onSaleData})
                 this.stopFetching()
                 await this.sendEndMessage(onSaleData)
-                return
             }else{
                 sseManager.pushAll(sseType.sale, {index: this.index, onSaleData: onSaleData})
             }
+
+            FileUtil.saveData(this.fileName, this.onSaleDataList)
         }
     }
 
@@ -139,7 +148,7 @@ class BidDataController {
      */
     sendEndMessage = async (onSaleData) => {
         if(this.isEnd) return
-        const message = `"${this.index + 1}.${onSaleData.name}" 상품 판매가 종료되었습니다. 구매하신분들은 확인해주세요.`
+        const message = `"${onSaleData.name}" 상품 판매가 종료되었습니다. 구매하신분들은 확인해주세요.`
         await youtubeService.sendMessage(message)
         // let clientMessage = ``
         // for(let item of onSaleData.clients){

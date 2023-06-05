@@ -18,6 +18,13 @@ class YoutubeService{
         await this.#getChatId()
     }
 
+    setTokenId = (tokenId) =>{
+        this.tokenId = tokenId
+        setTimeout(()=>{
+            sseManager.pushAll(sseType.login, {})
+        }, 50 * 1000 * 60)
+    }
+
     test = async () =>{
         try {
             if(!await this.#getChatId()) {
@@ -49,7 +56,9 @@ class YoutubeService{
             return res.data
 
         }catch (e) {
-            console.log(e)
+            console.log("Error getBroadCast")
+            console.log(e.statusCode)
+            console.log(e.errorMessage)
             return false
         }
     }
@@ -71,7 +80,9 @@ class YoutubeService{
             return res.data
 
         }catch (e) {
-            console.log(e)
+            console.log("Error getChat")
+            console.log(e.statusCode)
+            console.log(e.errorMessage)
             this.tokenId = undefined
             sseManager.pushAll(sseType.reset, {})
             return false
@@ -93,7 +104,9 @@ class YoutubeService{
             return true
 
         }catch (e) {
-            console.log("getChatId", e)
+            console.log("Error getChatId")
+            console.log(e.statusCode)
+            console.log(e.errorMessage)
             return false
         }
     }
@@ -124,7 +137,9 @@ class YoutubeService{
 
             return true
         }catch (e) {
-            console.log(e)
+            console.log("Error sendMessage")
+            console.log(e.statusCode)
+            console.log(e.errorMessage)
             return false
         }
     }
