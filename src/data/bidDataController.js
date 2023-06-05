@@ -23,6 +23,7 @@ class BidDataController {
     }
 
     reloadData = (fileName) =>{
+        this.fileName = fileName
         this.onSaleDataList = FileUtil.getData(fileName)
         return this.onSaleDataList
     }

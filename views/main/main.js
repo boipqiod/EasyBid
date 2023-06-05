@@ -18,6 +18,8 @@ let buttonSaveExcel
 let buttonBidEnd
 let buttonRefreshChat
 
+let buttonReload
+
 let productIndex = 0
 
 /**
@@ -44,6 +46,7 @@ window.onload = async () =>{
     buttonBidEnd = document.getElementById("button-bid-end")
     buttonSaveExcel = document.getElementById("button-save-excel")
     buttonRefreshChat = document.getElementById("button-refresh-chat")
+    buttonReload = document.getElementById("button_reload")
 
     fileName = document.getElementById('input_name')
 
@@ -66,14 +69,29 @@ const addEvent = () =>{
     buttonSaveExcel.addEventListener('click', exportToExcel)
     buttonRefreshChat.addEventListener('click', refreshChat)
 
+    buttonReload.addEventListener('click', reloadAction)
+}
+
+const reloadAction = async () =>{
+    const name = fileName.value
+    localStorage.setItem('fileName', name)
+    const myHeaders = { 'Content-Type': 'application/json', }
+    const myInit  = {method: "post", body: JSON.stringify({name}), headers: myHeaders};
+    try {
+        const res = await fetch("/data/reload", myInit)
+        console.log(await res.json())
+        await addSavedProduct()
+
+    }catch (e) {
+        console.log(e)
+    }
 }
 
 const reloadData = async () =>{
-    const name = localStorage.getItem('fileName')
-
-    console.log(name)
-
-    if(!name) return
+    let name = localStorage.getItem('fileName')
+    if(!name) {
+        name = fileName.value
+    }
 
     fileName.value = name
     const myHeaders = { 'Content-Type': 'application/json', }
