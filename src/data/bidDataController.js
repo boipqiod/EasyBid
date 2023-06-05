@@ -53,9 +53,9 @@ class BidDataController {
         try {
             this.isEnd = false
             this.index = index
-            this.fileName = `${Date.now()}_bid.json`
             const onSaleData = this.onSaleDataList[this.index]
             onSaleData.status = 1
+            FileUtil.saveData(this.fileName, this.onSaleDataList)
             const message = `"${onSaleData.name}" 상품의 판매를 시작합니다. 상품을 구매하고 싶은 만큼 숫자로 입력해주세요.`
             youtubeService.sendMessage(message).then()
             sseManager.pushAll(sseType.startSale, {index: this.index, onSaleData: onSaleData})
@@ -139,6 +139,7 @@ class BidDataController {
 
     stopFetching = () => {
         this.onSaleDataList[this.index].status = 2
+        FileUtil.saveData(this.fileName, this.onSaleDataList)
         sseManager.pushAll(sseType.endSale, {index: this.index, onSaleData: this.onSaleDataList[this.index]})
         this.sendEndMessage(this.onSaleDataList[this.index]).then()
         this.fetch().then()
