@@ -27,6 +27,11 @@ class BidDataController {
     reloadData = (fileName) =>{
         this.fileName = fileName
         this.onSaleDataList = FileUtil.getData(fileName)
+        for(let i = 0; i < this.onSaleDataList.length; i++){
+            if(this.onSaleDataList[i].status === 1) this.index = i
+        }
+        this.isEnd = false
+
         return this.onSaleDataList
     }
 
