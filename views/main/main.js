@@ -452,7 +452,6 @@ const exportToExcel = async () => {
     for (const item of items) {
         for (const client of item.clients) {
             const name = removeSpecialCharacters(client.name)
-            i ++
             const data = excelData.find((value) => value.name === name);
 
             if (data) {
@@ -460,7 +459,7 @@ const exportToExcel = async () => {
             } else {
 
                 excelData.push({
-                    name: `${i}번 손님`,
+                    name: `${i++}번 손님`,
                     data: [["고객명", "상품 이름", "수량", "개당 금액", "금액"], [client.name, item.name, client.amount, item.price, client.amount * item.price]],
                 });
             }
@@ -485,7 +484,7 @@ const exportToExcel = async () => {
 
 function removeSpecialCharacters(str) {
     // 특수 문자 패턴을 정규식으로 표현
-    var pattern = /[^\w\s]/g;
+    const pattern = /[^\w\s]/g;
 
     // 정규식에 매치되는 특수 문자 제거 후 반환
     return str.replace(pattern, '');
