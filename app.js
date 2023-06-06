@@ -12,6 +12,8 @@ const authRouter = require('./src/routes/auth');
 const dataRouter = require('./src/routes/data');
 
 const app = express();
+app.use(cors());
+
 app.use(
     session({
       secret: 'DMPlusGateway',
@@ -42,8 +44,6 @@ app.use('/data', dataRouter);
 app.use(function(req, res, next) {
   next(createError(404));
 });
-
-app.use(cors());
 
 // error handler
 app.use(function(err, req, res, next) {

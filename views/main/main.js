@@ -75,11 +75,12 @@ const addEvent = () =>{
         const bool = await swal("전송", "정말 전송하시겠습니까?", { buttons: true })
         if(!bool) return
 
+        const index = document.getElementById('input-force-index').value
         const name = document.getElementById('input-force-name').value
         const amount = document.getElementById('input-force-amount').value
 
         const myHeaders = { 'Content-Type': 'application/json', }
-        const myInit  = {method: "post", body: JSON.stringify({name, amount}), headers: myHeaders};
+        const myInit  = {method: "post", body: JSON.stringify({index, name, amount}), headers: myHeaders};
         try {
             const res = await fetch("/data/force", myInit)
             console.log(await res.json())
@@ -190,7 +191,7 @@ const appendProduct = (index, name, price, amount, status) => {
 
     tr.innerHTML =
         `                        
-<td class="col-1">${index + 1}</td>
+<td class="col-1">${index}</td>
 <td class="col-3">${name}</td>
 <td class="col-3">${price}</td>
 <td class="col-2">${amount}</td>

@@ -63,7 +63,7 @@ class BidDataController {
             const onSaleData = this.onSaleDataList[this.index]
             onSaleData.status = 1
             FileUtil.saveData(this.fileName, this.onSaleDataList)
-            const message = `"${onSaleData.name}" 상품의 판매를 시작합니다. 상품을 구매하고 싶은 만큼 숫자로 입력해주세요.`
+            const message = `"${onSaleData.name}(${formatCurrency(onSaleData.price)})" 상품의 판매를 시작합니다. 상품을 구매하고 싶은 만큼 숫자로 입력해주세요.`
             youtubeService.sendMessage(message).then()
             sseManager.pushAll(sseType.startSale, {index: this.index, onSaleData: onSaleData})
             youtubeService.resetPageToken()
@@ -96,24 +96,21 @@ class BidDataController {
         }
     }
 
-    saleItem = async (name, amount) =>{
+    saleItem = async (index, name, amount) =>{
         if(typeof amount === 'string') amount = parseInt(amount)
-        const onSaleData = this.onSaleDataList[this.index]
+        const onSaleData = this.onSaleDataList[index ? index : this.index]
 
         if (onSaleData.saleAmount + amount > onSaleData.amount) {
             amount = onSaleData.amount - onSaleData.saleAmount
-            sseManager.pushAll(sseType.saleClient, {text: `${name}님 ${amount}개*`, onSaleData})
+            if(!index) sseManager.pushAll(sseType.saleClient, {text: `${name}님 ${amount}개*`, onSaleData})
 
-            // await youtubeService.sendMessage(`${name}님 최대 갯수 초과로 ${amount}개만 구매 확인되었습니다`)
         }else if(onSaleData.maxAmount !== 0 && amount > onSaleData.maxAmount){
             amount = onSaleData.maxAmount
-            sseManager.pushAll(sseType.saleClient, {text: `${name}님 ${amount}개*`, onSaleData})
+            if(!index) sseManager.pushAll(sseType.saleClient, {text: `${name}님 ${amount}개*`, onSaleData})
 
-            // await youtubeService.sendMessage(`${name}님 최대 갯수 초과로 ${amount}개만 구매 확인되었습니다`)
         }else {
-            sseManager.pushAll(sseType.saleClient, {text: `${name}님 ${amount}개`, onSaleData})
+            if(!index) sseManager.pushAll(sseType.saleClient, {text: `${name}님 ${amount}개`, onSaleData})
 
-            // await youtubeService.sendMessage(`${name}님 ${amount}개 확인되었습니다.`)
         }
 
         //판매한량 저장
@@ -137,14 +134,16 @@ class BidDataController {
             })
         }
 
+        console.log('saleItem', name, amount)
+
         //판매 완료 확인
         if (onSaleData.saleAmount === onSaleData.amount) {
             onSaleData.status = 2
-            sseManager.pushAll(sseType.endSale, {index: this.index, onSaleData: onSaleData})
+            if(!index) sseManager.pushAll(sseType.endSale, {index: this.index, onSaleData: onSaleData})
             this.stopFetching()
             await this.sendEndMessage(onSaleData)
         }else{
-            sseManager.pushAll(sseType.sale, {index: this.index, onSaleData: onSaleData})
+            if(!index) sseManager.pushAll(sseType.sale, {index: this.index, onSaleData: onSaleData})
         }
 
         FileUtil.saveData(this.fileName, this.onSaleDataList)
@@ -184,6 +183,16 @@ class BidDataController {
 const isNumericString = str=> {
     return /^\d+$/.test(str);
 }
+
+const formatCurrency = value=> {
+    const formatter = new Intl.NumberFormat("ko-KR", {
+        style: "currency",
+        currency: "KRW",
+    });
+
+    return formatter.format(value);
+}
+
 
 let bidDataController = new BidDataController()
 

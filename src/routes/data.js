@@ -7,6 +7,8 @@ router.post('/addData', (req, res, next) => {
 
     try {
         const {name, price, amount, maxAmount} = req.body.item
+        console.log('/addData', req.body.name, name, price, amount, maxAmount)
+
         const fileName = req.body.name
         bidDataController.addOnSale(fileName, new OnSaleData({name, price, amount, maxAmount}))
     }catch (e) {
@@ -27,8 +29,8 @@ router.post('/remove', (req, res) =>{
 })
 
 router.post('/reload', (req, res) =>{
-
     const fileName = req.body.name
+    console.log('/reload', fileName)
     bidDataController.reloadData(fileName)
     res.send(true)
 })
@@ -43,9 +45,9 @@ router.get('/getData', (req, res) => {
     res.send(bidData)
 })
 router.post('/force', (req, res) => {
-    const {name, amount} = req.body
-    console.log('/data/force', name, amount)
-    bidDataController.saleItem(name, amount).then()
+    const {index, name, amount} = req.body
+    console.log('/data/force', index, name, amount)
+    bidDataController.saleItem(index, name, amount).then()
 
     res.send(true)
 })
