@@ -131,8 +131,20 @@ const addEvent = () =>{
             swal('수정 실패')
 
         }
+    })
 
-
+    document.getElementById('button-modify-cancel').addEventListener('click', () =>{
+        const name = document.getElementById('input-modify-product-name')
+        const amount = document.getElementById('input-modify-product-amount')
+        const price = document.getElementById('input-modify-product-price')
+        const max = document.getElementById('input-modify-product-max')
+        name.value = ""
+        amount.value = ""
+        price.value = ""
+        max.value = ""
+        const modal = document.getElementById('modify-modal')
+        modal.classList.remove('d-flex')
+        modal.classList.add('d-none')
     })
 
 }

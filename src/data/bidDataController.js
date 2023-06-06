@@ -141,12 +141,19 @@ class BidDataController {
 
         console.log('saleItem', name, amount)
 
+        if(index) {
+            const message = `${name}님 "${onSaleData.name}  [${formatCurrency(onSaleData.price)}]" ${amount}개 구매 확인되었습니다.`
+            await youtubeService.sendMessage(message)
+        }
+
         //판매 완료 확인
         if (onSaleData.saleAmount === onSaleData.amount) {
             onSaleData.status = 2
-            if (!index) sseManager.pushAll(sseType.endSale, {index: this.index, onSaleData: onSaleData})
-            this.stopFetching()
-            await this.sendEndMessage(onSaleData)
+            if (!index) {
+                sseManager.pushAll(sseType.endSale, {index: this.index, onSaleData: onSaleData})
+                this.stopFetching()
+                await this.sendEndMessage(onSaleData)
+            }
         } else {
             if (!index) sseManager.pushAll(sseType.sale, {index: this.index, onSaleData: onSaleData})
         }
