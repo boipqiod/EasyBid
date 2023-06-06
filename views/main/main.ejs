@@ -27,6 +27,9 @@
         .delete {
             background-color: #272727;
         }
+        .modify {
+            background-color: #595858;
+        }
 
         .completed {
             background-color: #214fff;
@@ -111,6 +114,7 @@
                         <td>판매 갯수</td>
                         <td>시작/종료</td>
                         <td>삭제</td>
+                        <td>수정</td>
                     </tr>
                     </thead>
                     <tbody id="tbody">
@@ -141,6 +145,35 @@
             <button id="button-bid-end" class="btn btn-warning w-100"> 경매 종료하기</button>
         </div>
     </div>
+
+    <div id="modify-modal" class="d-none vw-100 vh-100 position-fixed justify-content-center align-items-center" style="background-color: rgba(0,0,0,0.41); top: 0; left: 0;">
+        <div class="row w-100 m-2" style="background-color: white; padding: 20px; border-radius: 10px">
+            <div class="col">
+                <label for="input-modify-product-name">상품 이름</label>
+                <input id="input-modify-product-name" class="form-control m-1" placeholder="상품 이름">
+            </div>
+            <div class="col">
+                <label for="input-modify-product-price">개당 금액</label>
+                <input type="number" id="input-modify-product-price" class="form-control m-1" placeholder="개당 금액"
+                       min="1">
+            </div>
+            <div class="col">
+                <label for="input-modify-product-amount">판매 갯수</label>
+                <input type="number" id="input-modify-product-amount" class="form-control m-1" placeholder="판매 갯수"
+                       min="1">
+            </div>
+            <div class="col">
+                <label for="input-modify-product-amount">최대 구매 갯수</label>
+                <input type="number" id="input-modify-product-max" class="form-control m-1" placeholder="최대 구매 갯수"
+                       min="1" value="0">
+            </div>
+            <div class="w-100 m-2">
+                <button id="button-modify-submit" class="btn btn-primary w-100"> 수정 </button>
+            </div>
+        </div>
+
+    </div>
+
 </div>
 
 </body>

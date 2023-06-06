@@ -44,6 +44,15 @@ router.get('/getData', (req, res) => {
     const bidData = bidDataController.getOnSale()
     res.send(bidData)
 })
+
+router.post('/modify', (req, res) => {
+    const {index, name, amount, price, max} = req.body
+
+    console.log('/modify', req.body)
+    bidDataController.modify(parseInt(index), new OnSaleData({name, price, amount, maxAmount: max}))
+    res.send(true)
+})
+
 router.post('/force', (req, res) => {
     const {index, name, amount} = req.body
     console.log('/data/force', index, name, amount)

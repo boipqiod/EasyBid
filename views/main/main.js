@@ -22,6 +22,8 @@ let buttonReload
 
 let productIndex = 0
 
+let modifyIndex = 0
+
 /**
  * @type {[{amount: number, maxAmount: number, saleAmount: number, price: number, name: string, status: number, clients: [{name: string, amount: number}]}]}
  */
@@ -89,6 +91,48 @@ const addEvent = () =>{
         }catch (e) {
             console.log(e)
         }
+    })
+
+    document.getElementById('button-modify-submit').addEventListener('click',  async ()=>{
+
+        const name = document.getElementById('input-modify-product-name')
+        const amount = document.getElementById('input-modify-product-amount')
+        const price = document.getElementById('input-modify-product-price')
+        const max = document.getElementById('input-modify-product-max')
+
+        console.log(name, amount, price, max)
+
+        const myHeaders = { 'Content-Type': 'application/json', }
+        const myInit  = {method: "post", body: JSON.stringify({
+                index:modifyIndex,
+                name: name.value,
+                amount: amount.value,
+                price: price.value,
+                max: max.value}
+            ), headers: myHeaders};
+        try {
+            const res = await fetch("/data/modify", myInit)
+
+            const modal = document.getElementById('modify-modal')
+            modal.classList.remove('d-flex')
+            modal.classList.add('d-none')
+
+            name.value = ""
+            amount.value = ""
+            price.value = ""
+            max.value = ""
+
+            swal('수정 완료')
+
+            reloadAction()
+
+        }catch (e) {
+            console.log(e)
+            swal('수정 실패')
+
+        }
+
+
     })
 
 }
@@ -203,6 +247,9 @@ const appendProduct = (index, name, price, amount, status) => {
 <td>
     <button id="button-delete-${index}" class="delete">삭제</button>
 </td>
+<td>
+    <button id="button-modify-${index}" class="modify">수정</button>
+</td>
 `
 
     tbody.append(tr)
@@ -215,6 +262,9 @@ const appendProduct = (index, name, price, amount, status) => {
     }
     document.getElementById(`button-delete-${index}`).onclick = () => {
         deleteProduct(index).then()
+    }
+    document.getElementById(`button-modify-${index}`).onclick = () => {
+        modifyProduct(index).then()
     }
 }
 
@@ -306,6 +356,17 @@ const deleteProduct = async (index) =>{
     productIndex = items.length - 1
     await removeToServer(index)
     await addSavedProduct()
+}
+
+const modifyProduct = async (index) =>{
+    if(saleIndex === index){
+        swal("현재 경매 중인 상품을 수정이 불가능합니다.")
+        return
+    }
+    modifyIndex = index
+    const modal = document.getElementById('modify-modal')
+    modal.classList.remove('d-none')
+    modal.classList.add('d-flex')
 }
 
 const removeToServer = async (index) =>{

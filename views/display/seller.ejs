@@ -51,8 +51,10 @@
                         case "saleClient": {
                             const data = receivedData.data
                             const h1 = document.createElement('h1')
+                            h1.style.fontSize = `${document.getElementById("input_range").value}px`
+
                             const div = document.getElementById('div')
-                            h1.classList.add("col-4")
+                            h1.classList.add("col")
                             h1.textContent = data.text
                             div.appendChild(h1)
                             // setTimeout(()=>{
