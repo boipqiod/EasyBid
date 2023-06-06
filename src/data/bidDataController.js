@@ -92,7 +92,7 @@ class BidDataController {
 
             console.log(name, amount)
 
-            await this.saleItem(name, amount)
+            await this.saleItem(undefined ,name, amount)
         }
     }
 

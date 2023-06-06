@@ -31,8 +31,8 @@ router.post('/remove', (req, res) =>{
 router.post('/reload', (req, res) =>{
     const fileName = req.body.name
     console.log('/reload', fileName)
-    bidDataController.reloadData(fileName)
-    res.send(true)
+    const item = bidDataController.reloadData(fileName)
+    res.send(item)
 })
 
 router.get('/getDataList', (req, res) => {
