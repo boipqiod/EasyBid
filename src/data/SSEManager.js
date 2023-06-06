@@ -21,6 +21,8 @@ class SSEManager{
     }
 
     pushAll = (type, data) =>{
+        console.log("sse push", type, data)
+
         for(const res of this.#resList){
             res.write(`data: ${JSON.stringify({type, data})}\n\n`)
         }
