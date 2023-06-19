@@ -27,9 +27,8 @@ class MessageController {
     init = async (input, button) => {
         this.#input = input
         this.#button = button
+        this.#startSendChatTimer()
 
-        console.log(input)
-        console.log(button)
         const res = await API.getBidNow()
 
          this.#lastChatId = res.lastChatId
@@ -37,13 +36,13 @@ class MessageController {
             this.#start = true
             await this.startTime()
         }
-        this.#startSendChatTimer()
     }
 
     #startSendChatTimer = () =>{
         this.#ChatTimer = setInterval(()=>{
             if(this.#chatList.length){
-                this.sendMessage(this.#chatList.shift()).then()
+                const message = this.#chatList.shift()
+                this.sendMessage(message).then()
             }
         }, 500)
     }
@@ -60,7 +59,7 @@ class MessageController {
     }
 
     startTime = async () =>{
-        await Util.setDelay(1000)
+        await Util.setDelay(500)
 
         const list = await this.getChat()
         if (list && list.length !== 0) {
@@ -68,7 +67,6 @@ class MessageController {
                 lastChatId: this.#lastChatId,
                 data: list
             })
-            console.log(this.#start = true)
         }
 
         if(this.#start) {
@@ -91,22 +89,33 @@ class MessageController {
         this.#button.dispatchEvent(this.#clickEvent)
     }
 
-    setLastId = () =>{
+    setLastId = (id) =>{
         const getId = () =>{
             const nodeList = document.querySelectorAll('yt-live-chat-text-message-renderer')
             let chatList = Array.from(nodeList)
-            return chatList[chatList.length - 1].id
+            const index = chatList.findIndex(v => v.id === id)
+            if(index !== -1) {
+                return chatList[index + 1].id
+            }else {
+                return undefined
+            }
         }
 
         return new Promise(async resolve => {
             const t = setInterval(()=>{
                 const id = getId()
 
-                console.log("setLastId", id)
-                if(id.substring(0, 5) === 'ChwKG') {
+                if(!id) {
+                    console.log(id)
+                    clearInterval(t)
+                    resolve()
+                }
+                else if(id.substring(0, 5) === 'ChwKG') {
                     this.#lastChatId = id
                     clearInterval(t)
                     resolve()
+                }else{
+                    console.log("setLastId", id)
                 }
             },100)
         })
@@ -117,21 +126,21 @@ class MessageController {
             const nodeList = document.querySelectorAll('yt-live-chat-text-message-renderer')
             let chatList = Array.from(nodeList)
 
+            let _chatList = []
+
             if (this.#lastChatId) {
                 const lastChatIndex = chatList.findIndex(chat => chat.id === this.#lastChatId);
                 if(lastChatIndex !== -1) {
-                    chatList = chatList.slice(lastChatIndex + 1);
+                    _chatList = [...chatList.slice(lastChatIndex + 1)]
                 }
             }
 
             const resList = []
-            for (const item of chatList) {
+            for (const item of _chatList) {
                 const data = this.#getNameAndMessage(item)
                 if (data) resList.push(data)
             }
-
-            await Util.setDelay(2000)
-            await this.setLastId()
+            await this.setLastId(chatList[chatList.length - 2].id)
 
             return resList
         } catch (e) {
