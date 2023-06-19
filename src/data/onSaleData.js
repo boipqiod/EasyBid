@@ -19,9 +19,9 @@ class OnSaleData {
                 }) {
 
         this.name = name
-        this.price = price
-        this.amount = amount
-        this.maxAmount = maxAmount
+        this.price = typeof price === "string" ? parseInt(price) : price
+        this.amount = typeof amount === "string" ? parseInt(amount) : amount
+        this.maxAmount = typeof maxAmount === "string" ? parseInt(maxAmount) : maxAmount
         this.saleAmount = 0
         this.status = 0
         this.clients = []

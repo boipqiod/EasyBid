@@ -117,5 +117,10 @@ router.get('/test', (req, res)=>{
 
 })
 
+router.get('/testData', (req, res)=>{
+    res.render("main/main")
+
+})
+
 
 module.exports = router;
