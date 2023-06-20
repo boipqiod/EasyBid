@@ -5,7 +5,6 @@ const {FileUtil} = require("../common/FileUtil");
 
 class BidDataController {
 
-
     //상품 인덱스
     index
 
@@ -15,6 +14,7 @@ class BidDataController {
     fileName
     isEnd
 
+    lastChatId
 
     addOnSale = (fileName, onSaleData) => {
         if (!this.onSaleDataList) this.onSaleDataList = []
@@ -69,10 +69,8 @@ class BidDataController {
             onSaleData.status = 1
             FileUtil.saveData(this.fileName, this.onSaleDataList)
             const message = `"${onSaleData.name}  [${formatCurrency(onSaleData.price)}]" 상품의 판매를 시작합니다. 상품을 구매하고 싶은 만큼 숫자로 입력해주세요.`
-            youtubeService.sendMessage(message).then()
             sseManager.pushAll(sseType.startSale, {index: this.index, onSaleData: onSaleData})
-            youtubeService.resetPageToken()
-            await youtubeService.getChat()
+            sseManager.pushAll(sseType.message, {message})
         } catch (e) {
             console.log(e)
         }
@@ -80,7 +78,6 @@ class BidDataController {
 
     fetch = async () => {
         if (this.isEnd) return
-
 
         const response = await youtubeService.getChat()
         const delayTime = response.pollingIntervalMillis ? response.pollingIntervalMillis : 1000
@@ -102,20 +99,27 @@ class BidDataController {
     }
 
     saleItem = async (index, name, amount) => {
+        console.log("amount", amount, typeof amount)
+
         if (typeof amount === 'string') amount = parseInt(amount)
         const onSaleData = this.onSaleDataList[index ? index : this.index]
 
+        console.log(onSaleData, name, amount)
+
+        //초과 판매된 경우
         if (onSaleData.saleAmount + amount > onSaleData.amount) {
             amount = onSaleData.amount - onSaleData.saleAmount
             if (!index) sseManager.pushAll(sseType.saleClient, {text: `${name}님 ${amount}개*`, onSaleData})
+            if (!index) sseManager.pushAll(sseType.message, {message: `${name}님 ${amount}개* 확인되었습니다.`})
 
         } else if (onSaleData.maxAmount !== 0 && amount > onSaleData.maxAmount) {
             amount = onSaleData.maxAmount
             if (!index) sseManager.pushAll(sseType.saleClient, {text: `${name}님 ${amount}개*`, onSaleData})
+            if (!index) sseManager.pushAll(sseType.message, {message: `${name}님 ${amount}개* 확인되었습니다.`})
 
         } else {
             if (!index) sseManager.pushAll(sseType.saleClient, {text: `${name}님 ${amount}개`, onSaleData})
-
+            if (!index) sseManager.pushAll(sseType.message, {message: `${name}님 ${amount}개 확인되었습니다.`})
         }
 
         //판매한량 저장
@@ -139,7 +143,7 @@ class BidDataController {
             })
         }
 
-        console.log('saleItem', name, amount)
+        console.log('saleItem', name, amount, onSaleData.clients)
 
         if(index) {
             const message = `${name}님 "${onSaleData.name}  [${formatCurrency(onSaleData.price)}]" ${amount}개 구매 확인되었습니다.`
@@ -166,7 +170,6 @@ class BidDataController {
         FileUtil.saveData(this.fileName, this.onSaleDataList)
         sseManager.pushAll(sseType.endSale, {index: this.index, onSaleData: this.onSaleDataList[this.index]})
         this.sendEndMessage(this.onSaleDataList[this.index]).then()
-        this.fetch().then()
         this.isEnd = true
     }
 
@@ -177,7 +180,7 @@ class BidDataController {
     sendEndMessage = async (onSaleData) => {
         if (this.isEnd) return
         const message = `"${onSaleData.name}"  상품 판매가 종료되었습니다. 구매하신분들은 확인해주세요.`
-        await youtubeService.sendMessage(message)
+        sseManager.pushAll(sseType.message, {message})
         // let clientMessage = ``
         // for(let item of onSaleData.clients){
         //     let msg = `[${item.name} 님 : ${item.amount}개] `

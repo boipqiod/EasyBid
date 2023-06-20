@@ -7,7 +7,7 @@ router.post('/addData', (req, res, next) => {
 
     try {
         const {name, price, amount, maxAmount} = req.body.item
-        console.log('/addData', req.body.name, name, price, amount, maxAmount)
+        console.log('/addData', req.body.name, req.body.item)
 
         parseInt(price)
 
@@ -62,5 +62,27 @@ router.post('/force', (req, res) => {
     res.send(true)
 })
 
+router.post('/chat', (req, res) => {
+    console.log('/chat', req.body)
+    for(const item of req.body.data){
+        console.log(item)
+        bidDataController.saleItem(undefined, item.name, item.message).then()
+    }
+    bidDataController.lastChatId = req.body.lastChatId
+
+    res.send(true)
+})
+
+router.get('/bidNow', (req, res) => {
+
+    const onSale = bidDataController.getOnSale()
+    let isOnSale = false
+    if(onSale) isOnSale = onSale.status === 1
+
+    res.send({
+        isOnSale,
+        lastChatId: bidDataController.lastChatId
+    })
+})
 
 module.exports = router;
