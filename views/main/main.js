@@ -457,7 +457,7 @@ const receivedSSE = e => {
             }
             case "sale": {
                 const data = receivedData.data
-                saleProductUpdate(data.index, data.onSaleData.saleAmount)
+                saleProductUpdate(data.index, data.onSaleData.amount - data.onSaleData.saleAmount)
                 return;
             }
             case "reset":{

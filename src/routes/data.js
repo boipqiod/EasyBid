@@ -9,12 +9,13 @@ router.post('/addData', (req, res, next) => {
         const {name, price, amount, maxAmount} = req.body.item
         console.log('/addData', req.body.name, name, price, amount, maxAmount)
 
+        parseInt(price)
+
         const fileName = req.body.name
-        bidDataController.addOnSale(fileName, new OnSaleData({name, price, amount, maxAmount}))
+        bidDataController.addOnSale(fileName, new OnSaleData({name, price: parseInt(price), amount: parseInt(amount), maxAmount: parseInt(maxAmount)}))
     }catch (e) {
         console.log(e)
     }
-
 
     res.send(true)
 })
