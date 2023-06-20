@@ -59,7 +59,7 @@ class MessageController {
     }
 
     startTime = async () =>{
-        await Util.setDelay(100)
+        await Util.setDelay(1000)
 
         const list = await this.getChat()
         if (list && list.length !== 0) {
@@ -90,6 +90,7 @@ class MessageController {
     }
 
     setLastId = (id, offset) =>{
+
         const getId = () =>{
             const nodeList = document.querySelectorAll('yt-live-chat-text-message-renderer')
             let chatList = Array.from(nodeList)
