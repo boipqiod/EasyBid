@@ -44,7 +44,7 @@ class MessageController {
                 const message = this.#chatList.shift()
                 this.sendMessage(message).then()
             }
-        }, 500)
+        }, 100)
     }
 
     pushMessage = (message) =>{
@@ -59,7 +59,7 @@ class MessageController {
     }
 
     startTime = async () =>{
-        await Util.setDelay(500)
+        await Util.setDelay(100)
 
         const list = await this.getChat()
         if (list && list.length !== 0) {
@@ -89,13 +89,16 @@ class MessageController {
         this.#button.dispatchEvent(this.#clickEvent)
     }
 
-    setLastId = (id) =>{
+    setLastId = (id, offset) =>{
         const getId = () =>{
             const nodeList = document.querySelectorAll('yt-live-chat-text-message-renderer')
             let chatList = Array.from(nodeList)
             const index = chatList.findIndex(v => v.id === id)
-            if(index !== -1) {
-                return chatList[index + 1].id
+
+            if(!offset || !id){
+                return chatList[chatList.length - 1].id
+            }else if(index !== -1) {
+                return chatList[index + offset].id
             }else {
                 return undefined
             }
@@ -140,7 +143,7 @@ class MessageController {
                 const data = this.#getNameAndMessage(item)
                 if (data) resList.push(data)
             }
-            await this.setLastId(chatList[chatList.length - 2].id)
+            await this.setLastId(this.#lastChatId, _chatList.length)
 
             return resList
         } catch (e) {
