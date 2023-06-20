@@ -16,6 +16,7 @@ let spanSaleAmount
 
 let buttonSaveExcel
 let buttonBidEnd
+let buttonRefreshChat
 
 let buttonReload
 
@@ -46,6 +47,7 @@ window.onload = async () =>{
 
     buttonBidEnd = document.getElementById("button-bid-end")
     buttonSaveExcel = document.getElementById("button-save-excel")
+    buttonRefreshChat = document.getElementById("button-refresh-chat")
     buttonReload = document.getElementById("button_reload")
 
     fileName = document.getElementById('input_name')
@@ -67,6 +69,7 @@ const addEvent = () =>{
 
     buttonBidEnd.addEventListener('click', bidEnd)
     buttonSaveExcel.addEventListener('click', exportToExcel)
+    buttonRefreshChat.addEventListener('click', refreshChat)
 
     buttonReload.addEventListener('click', reloadAction)
 
@@ -514,6 +517,17 @@ const bidEnd = async () =>{
         const res = await fetch("/endBid", myInit)
         await addSavedProduct()
 
+        console.log(await res.json())
+    }catch (e) {
+        console.log(e)
+    }
+}
+
+const refreshChat = async () =>{
+    const myHeaders = { 'Content-Type': 'application/json', }
+    const myInit  = {method: "post", headers: myHeaders};
+    try {
+        const res = await fetch("/refresh", myInit)
         console.log(await res.json())
     }catch (e) {
         console.log(e)

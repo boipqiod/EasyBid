@@ -27,7 +27,6 @@
         .delete {
             background-color: #272727;
         }
-
         .modify {
             background-color: #595858;
         }
@@ -44,9 +43,10 @@
         <h1 class="m-5">쉬운 경매 상품 등록 프로그램</h1>
 
         <div class="row m-1">
-            <input id="input_name" class="input-group-sm input-group-tex col-10" placeholder="경매 이름 입력하기"/>
-            <button id="button_reload" class="col btn btn-info mx-2">리로드</button>
+            <input id="input_name" class="input-group-sm input-group-tex col-10" placeholder="경매 이름 입력하기" />
+            <button id="button_reload" class="col-2 btn btn-info">리로드</button>
         </div>
+        <a class="btn btn-secondary w-100 m-1" href="/auth/sign" target="_blank">다시 로그인하기</a>
         <a class="btn btn-secondary w-100 m-1" href="/display/seller" target="_blank">구매자 리스트 링크 열기</a>
         <a class="btn btn-secondary w-100 m-1" href="/display" target="_blank">판매 상품 링크 열기</a>
 
@@ -85,14 +85,21 @@
                                    min="1">
                         </div>
                         <div class="col">
-                            <label for="input-product-max">최대 구매 갯수</label>
-                            <input type="number" id="input-product-max" class="form-control m-1" placeholder="최대 구매 갯수" min="1" value="0">
+                            <label for="input-product-amount">최대 구매 갯수</label>
+                            <input type="number" id="input-product-max" class="form-control m-1" placeholder="최대 구매 갯수"
+                                   min="1" value="0">
                         </div>
                     </div>
+
+                    <!--                    <button id="button-clear" class="btn btn-secondary">clear</button>-->
                 </div>
                 <button id="button-product-add" class="btn btn-primary w-100">+</button>
             </div>
         </div>
+        <hr>
+        <button id="button-refresh-chat" class="btn btn-info w-100 m-1">댓글 읽어 오기</button>
+
+        <hr>
         <div class="card w-100 m-1">
             <div class="card-header">
                 등록된 상품
@@ -128,7 +135,7 @@
             </div>
             <div class="col-2">
                 <p></p>
-                <button id="button-input-force" class="btn btn-secondary"> 전송</button>
+                <button id="button-input-force" class="btn btn-secondary" placeholder="갯수"> 전송 </button>
             </div>
         </div>
         <div class="w-100 m-2">
@@ -139,8 +146,7 @@
         </div>
     </div>
 
-    <div id="modify-modal" class="d-none vw-100 vh-100 position-fixed justify-content-center align-items-center"
-         style="background-color: rgba(0,0,0,0.41); top: 0; left: 0;">
+    <div id="modify-modal" class="d-none vw-100 vh-100 position-fixed justify-content-center align-items-center" style="background-color: rgba(0,0,0,0.41); top: 0; left: 0;">
         <div class="row w-100 m-2" style="background-color: white; padding: 20px; border-radius: 10px">
             <div class="col">
                 <label for="input-modify-product-name">상품 이름</label>
@@ -162,10 +168,10 @@
                        min="1" value="0">
             </div>
             <div class="w-100 m-2">
-                <button id="button-modify-submit" class="btn btn-primary w-100"> 수정</button>
+                <button id="button-modify-submit" class="btn btn-primary w-100"> 수정 </button>
             </div>
             <div class="w-100 m-2">
-                <button id="button-modify-cancel" class="btn btn-danger w-100"> 취소</button>
+                <button id="button-modify-cancel" class="btn btn-danger w-100"> 취소 </button>
             </div>
         </div>
 
