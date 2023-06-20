@@ -50,14 +50,14 @@ router.post('/modify', (req, res) => {
     const {index, name, amount, price, max} = req.body
 
     console.log('/modify', req.body)
-    bidDataController.modify(parseInt(index), new OnSaleData({name, price, amount, maxAmount: max}))
+    bidDataController.modify(parseInt(index), new OnSaleData({name, price: parseInt(price), amount: parseInt(amount), maxAmount: parseInt(max)}))
     res.send(true)
 })
 
 router.post('/force', (req, res) => {
     const {index, name, amount} = req.body
-    console.log('/data/force', index, name, amount)
-    bidDataController.saleItem(index, name, amount).then()
+    console.log('/data/force', index, name, parseInt(amount))
+    bidDataController.saleItem(index, name, parseInt(amount)).then()
 
     res.send(true)
 })
