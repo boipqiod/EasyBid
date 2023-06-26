@@ -15,7 +15,8 @@ class OnSaleData {
                     name,
                     price,
                     amount,
-                    maxAmount
+                    maxAmount,
+                    clients = []
                 }) {
 
         this.name = name

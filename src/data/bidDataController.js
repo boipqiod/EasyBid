@@ -2,6 +2,7 @@ const youtubeService = require("../service/YoutubeService");
 const {sseManager, sseType} = require("./SSEManager");
 const {delay} = require("../common/common");
 const {FileUtil} = require("../common/FileUtil");
+const OnSaleData = require("./onSaleData");
 
 class BidDataController {
 
@@ -44,7 +45,13 @@ class BidDataController {
     }
 
     modify = (index, onSaleData) => {
-        this.onSaleDataList[index] = onSaleData
+        this.onSaleDataList[index] = new OnSaleData({
+            name: onSaleData.name,
+            price: onSaleData.price,
+            amount: onSaleData.amount,
+            maxAmount: onSaleData.maxAmount,
+            clients: this.onSaleDataList[index].clients
+        })
         FileUtil.saveData(this.fileName, this.onSaleDataList)
     }
 
